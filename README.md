@@ -191,6 +191,13 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td>Return the number of offsets that are smaller or equal to the specified offset.</td>
         <td><code>rb_rank(rb_build('{1,2,3}'),3)</code></td>
     </tr>
+        <tr>
+        <td><code>rb_iterate</code></td>
+        <td><code>roraingbitmap</code></td>
+        <td><code>setof integer</code></td>
+        <td>Return offsets List.</td>
+        <td><code>rb_iterate(rb_build('{1,2,3}'))</code></td>
+    </tr>
 </table>
 
 ## Aggregation List

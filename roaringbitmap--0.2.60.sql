@@ -1,25 +1,27 @@
+--- Create by ZEROMAX on 2017/3/20 ---
+
 SET search_path = public;
 
 --- data type --
 
 CREATE OR REPLACE FUNCTION roaringbitmap_in(cstring)
    RETURNS roaringbitmap
-   AS 'roaringbitmap.so','roaringbitmap_in'
+   AS 'MODULE_PATHNAME','roaringbitmap_in'
    LANGUAGE C STRICT IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION roaringbitmap_out(roaringbitmap)
    RETURNS cstring
-   AS 'roaringbitmap.so','roaringbitmap_out'
+   AS 'MODULE_PATHNAME','roaringbitmap_out'
    LANGUAGE C STRICT IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION roaringbitmap_recv(internal)
    RETURNS roaringbitmap
-   AS 'roaringbitmap.so','roaringbitmap_recv'
+   AS 'MODULE_PATHNAME','roaringbitmap_recv'
    LANGUAGE C STRICT IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION roaringbitmap_send(roaringbitmap)
    RETURNS bytea
-   AS 'roaringbitmap.so','roaringbitmap_send'
+   AS 'MODULE_PATHNAME','roaringbitmap_send'
    LANGUAGE C STRICT IMMUTABLE;
 
 CREATE TYPE roaringbitmap (
@@ -35,126 +37,148 @@ CREATE TYPE roaringbitmap (
 
 CREATE OR REPLACE FUNCTION rb_build(integer[])
    RETURNS roaringbitmap 
-   AS 'roaringbitmap.so', 'rb_build'
+   AS 'MODULE_PATHNAME', 'rb_build'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_or(roaringbitmap, roaringbitmap)
    RETURNS roaringbitmap 
-   AS 'roaringbitmap.so', 'rb_or'
+   AS 'MODULE_PATHNAME', 'rb_or'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_or_cardinality(roaringbitmap, roaringbitmap)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_or_cardinality'
+   AS 'MODULE_PATHNAME', 'rb_or_cardinality'
    LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_and(roaringbitmap, roaringbitmap)
    RETURNS roaringbitmap 
-   AS 'roaringbitmap.so', 'rb_and'
+   AS 'MODULE_PATHNAME', 'rb_and'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_and_cardinality(roaringbitmap, roaringbitmap)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_and_cardinality'
+   AS 'MODULE_PATHNAME', 'rb_and_cardinality'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_xor(roaringbitmap, roaringbitmap)
    RETURNS roaringbitmap 
-   AS 'roaringbitmap.so', 'rb_xor'
+   AS 'MODULE_PATHNAME', 'rb_xor'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_xor_cardinality(roaringbitmap, roaringbitmap)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_xor_cardinality'
+   AS 'MODULE_PATHNAME', 'rb_xor_cardinality'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_andnot(roaringbitmap, roaringbitmap)
    RETURNS roaringbitmap 
-   AS 'roaringbitmap.so', 'rb_andnot'
+   AS 'MODULE_PATHNAME', 'rb_andnot'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_andnot_cardinality(roaringbitmap, roaringbitmap)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_andnot_cardinality'
+   AS 'MODULE_PATHNAME', 'rb_andnot_cardinality'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_cardinality(roaringbitmap)
    RETURNS integer 
-   AS 'roaringbitmap.so', 'rb_cardinality'
+   AS 'MODULE_PATHNAME', 'rb_cardinality'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_is_empty(roaringbitmap)
   RETURNS bool
-  AS  'roaringbitmap.so', 'rb_is_empty'
+  AS  'MODULE_PATHNAME', 'rb_is_empty'
    LANGUAGE C STRICT;
 
 
 CREATE OR REPLACE FUNCTION rb_equals(roaringbitmap, roaringbitmap)
   RETURNS bool
-  AS  'roaringbitmap.so', 'rb_equals'
+  AS  'MODULE_PATHNAME', 'rb_equals'
    LANGUAGE C STRICT;
 
+CREATE OR REPLACE FUNCTION rb_not_equals(roaringbitmap, roaringbitmap)
+  RETURNS bool 
+  AS  'MODULE_PATHNAME', 'rb_not_equals'
+   LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_intersect(roaringbitmap, roaringbitmap)
   RETURNS bool
-  AS  'roaringbitmap.so', 'rb_intersect'
+  AS  'MODULE_PATHNAME', 'rb_intersect'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_add(roaringbitmap, integer)
+   RETURNS roaringbitmap
+   AS 'MODULE_PATHNAME', 'rb_add'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_add(roaringbitmap, integer, integer)
+   RETURNS roaringbitmap
+   AS 'MODULE_PATHNAME', 'rb_add_range'
    LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_remove(roaringbitmap, integer)
    RETURNS roaringbitmap
-   AS 'roaringbitmap.so', 'rb_remove'
+   AS 'MODULE_PATHNAME', 'rb_remove'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_remove(roaringbitmap, integer, integer)
+   RETURNS roaringbitmap
+   AS 'MODULE_PATHNAME', 'rb_remove_range'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_flip(roaringbitmap, integer)
+   RETURNS roaringbitmap
+   AS 'MODULE_PATHNAME', 'rb_flip'
    LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_flip(roaringbitmap, integer, integer)
    RETURNS roaringbitmap
-   AS 'roaringbitmap.so', 'rb_flip'
+   AS 'MODULE_PATHNAME', 'rb_flip_range'
    LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_minimum(roaringbitmap)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_minimum'
+   AS 'MODULE_PATHNAME', 'rb_minimum'
    LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_maximum(roaringbitmap)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_maximum'
+   AS 'MODULE_PATHNAME', 'rb_maximum'
    LANGUAGE C STRICT;
 
  CREATE OR REPLACE FUNCTION rb_rank(roaringbitmap, integer)
    RETURNS integer
-   AS 'roaringbitmap.so', 'rb_rank'
+   AS 'MODULE_PATHNAME', 'rb_rank'
    LANGUAGE C STRICT;
 
 CREATE OR REPLACE FUNCTION rb_iterate(roaringbitmap)
    RETURNS SETOF integer 
-   AS 'roaringbitmap.so', 'rb_iterate'
+   AS 'MODULE_PATHNAME', 'rb_iterate'
    LANGUAGE C STRICT;
-
 
 CREATE OR REPLACE FUNCTION rb_serialize(internal)
      RETURNS roaringbitmap
-     AS 'roaringbitmap.so', 'rb_serialize'
+     AS 'MODULE_PATHNAME', 'rb_serialize'
      LANGUAGE C IMMUTABLE;
-
 
 CREATE OR REPLACE FUNCTION rb_cardinality_trans(internal)
      RETURNS integer
-     AS 'roaringbitmap.so', 'rb_cardinality_trans'
+     AS 'MODULE_PATHNAME', 'rb_cardinality_trans'
      LANGUAGE C IMMUTABLE;
 
 
 CREATE OR REPLACE FUNCTION rb_or_trans(internal, roaringbitmap)
      RETURNS internal
-      AS 'roaringbitmap.so', 'rb_or_trans'
+      AS 'MODULE_PATHNAME', 'rb_or_trans'
      LANGUAGE C IMMUTABLE;
 
 CREATE AGGREGATE rb_or_agg(roaringbitmap)(
@@ -162,6 +186,70 @@ CREATE AGGREGATE rb_or_agg(roaringbitmap)(
        STYPE = internal,
        FINALFUNC = rb_serialize
 );
+
+-- operator -- 
+
+CREATE OPERATOR & (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_and
+);
+
+CREATE OPERATOR | (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_or
+);
+
+CREATE OPERATOR # (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_xor
+);
+
+
+CREATE OPERATOR + (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = integer,
+  PROCEDURE = rb_add
+);
+
+CREATE OPERATOR - (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = integer,
+  PROCEDURE = rb_remove
+);
+
+CREATE OPERATOR = (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_equals,
+  COMMUTATOR = '=',
+  NEGATOR = '<>',
+  RESTRICT = eqsel,
+  JOIN = eqjoinsel
+);
+
+CREATE OPERATOR <> (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_not_equals,
+  COMMUTATOR = '<>',
+  NEGATOR = '=',
+  RESTRICT = neqsel,
+  JOIN = neqjoinsel
+);
+
+CREATE OPERATOR && (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_intersect,
+  COMMUTATOR = '&&',
+  RESTRICT = contsel,
+  JOIN = contjoinsel
+);
+
+
 
 -- aggragations --
 
@@ -174,7 +262,7 @@ CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
 
 CREATE OR REPLACE FUNCTION rb_and_trans(internal, roaringbitmap)
      RETURNS internal
-      AS 'roaringbitmap.so', 'rb_and_trans'
+      AS 'MODULE_PATHNAME', 'rb_and_trans'
      LANGUAGE C IMMUTABLE;
 
 CREATE AGGREGATE rb_and_agg(roaringbitmap)(
@@ -193,7 +281,7 @@ CREATE AGGREGATE rb_and_cardinality_agg(roaringbitmap)(
 
 CREATE OR REPLACE FUNCTION rb_xor_trans(internal, roaringbitmap)
      RETURNS internal
-      AS 'roaringbitmap.so', 'rb_xor_trans'
+      AS 'MODULE_PATHNAME', 'rb_xor_trans'
      LANGUAGE C IMMUTABLE;
 
 CREATE AGGREGATE rb_xor_agg(roaringbitmap)(
@@ -211,7 +299,7 @@ CREATE AGGREGATE rb_xor_cardinality_agg(roaringbitmap)(
 
 CREATE OR REPLACE FUNCTION rb_build_trans(internal, integer)
      RETURNS internal
-      AS 'roaringbitmap.so', 'rb_build_trans'
+      AS 'MODULE_PATHNAME', 'rb_build_trans'
      LANGUAGE C;
 
 CREATE  AGGREGATE rb_build_agg(integer)(
