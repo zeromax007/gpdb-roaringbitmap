@@ -5,7 +5,7 @@ RoaringBitmap extension for greenplum-db
 # Introduction
 Roaring bitmaps are compressed bitmaps which tend to outperform conventional compressed bitmaps such as WAH, EWAH or Concise. In some instances, roaring bitmaps can be hundreds of times faster and they often offer significantly better compression. They can even be faster than uncompressed bitmaps. More information https://github.com/RoaringBitmap/CRoaring.   
 
-Roaringbitmap是一种高效的Bitmap压缩算法，并且压缩后的数据可以直接参与计算，目前已被广泛应用在各种语言和各种大数据平台上。  
+Roaringbitmap是一种高效的Bitmap压缩算法，目前已被广泛应用在各种语言和各种大数据平台上。  
 本插件将Roaringbitmap功能集成到Greenplum数据库中，将Roaringbitmap作为一种数据类型提供原生的数据库函数、操作符、聚合等功能支持。  
 Bitmap位计算非常适合大数据基数计算，常用于去重、标签筛选、时间序列等计算中。  
 
@@ -77,6 +77,15 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
             Build a roaringbitmap from integer array.<BR>通过数组创建一个Bitmap。
         </td>
         <td><code>rb_build('{1,2,3,4,5}')</code></td>
+    </tr>
+    <tr>
+        <td><code>rb_to_array</code></td>
+        <td><code>roaringbitmap</code></td>
+        <td><code>integer[]</code></td>
+        <td>
+            Bitmap to integer array.<BR>Bitmap转数组。
+        </td>
+        <td><code>rb_to_array(rb_build('{1,2,3,4,5}'))</code></td>
     </tr>
     <tr>
         <td><code>rb_and</code></td>
@@ -216,7 +225,7 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td><code>roraingbitmap<BR>integer<BR>integer</code></td>
         <td><code>roraingbitmap</code></td>
         <td>Add a specific offsets range to roaringbitmap.<BR>添加特定的Offset段到Bitmap。</td>
-        <td><code>rb_add(rb_build('{1,2,3}'),3)</code></td>
+        <td><code>rb_add(rb_build('{1,2,3}'),3,4)</code></td>
     </tr>
     <tr>
         <td><code>rb_remove</code></td>
@@ -318,6 +327,14 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td><code>rb_build('{1,2,3}') # rb_build('{1,2,3}')</code></td>
     </tr>
     <tr>
+        <td><code>~</code></td>
+        <td><code>roraingbitmap</code></td>
+        <td><code>roraingbitmap</code></td>
+        <td><code>roraingbitmap</code></td>
+        <td>Two roaringbitmap andnot calculation.<BR>两个Bitmap Andnot 操作。</td>
+        <td><code>rb_build('{1,2,3}') ~ rb_build('{1,2,3}')</code></td>
+    </tr>
+    <tr>
         <td><code>+</code></td>
         <td><code>roraingbitmap</code></td>
         <td><code>intger</code></td>
@@ -347,6 +364,14 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td><code>roraingbitmap</code></td>
         <td><code>boolean</code></td>
         <td>Check two roaringbitmap are equal.<BR>判断两个Bitmap是否相等。</td>
+        <td><code>rb_build('{1,2,3}') = rb_build('{3,2,1}') </code></td>
+    </tr>
+    <tr>
+        <td><code>&&</code></td>
+        <td><code>roraingbitmap</code></td>
+        <td><code>roraingbitmap</code></td>
+        <td><code>boolean</code></td>
+        <td>Check two roaringbitmaps are intersected.<BR>判断两个Bitmap是否相交。</td>
         <td><code>rb_build('{1,2,3}') = rb_build('{3,2,1}') </code></td>
     </tr>
     <tr>

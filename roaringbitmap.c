@@ -1081,7 +1081,6 @@ Datum
     bytea *serializedbytes = PG_GETARG_BYTEA_P(0);
     ArrayType *result;
     Datum *out_datums;
-    bool *out_nulls;
     uint64_t card1;
     uint32_t counter = 0;
 
@@ -1098,19 +1097,16 @@ Datum
     else
     {
         out_datums = (Datum *)palloc(sizeof(Datum) * card1);
-        out_nulls = (bool *)palloc(sizeof(bool) * card1);
 
         roaring_uint32_iterator_t *i = roaring_create_iterator(r1);
         while (i->has_value)
         {
             out_datums[counter] = Int32GetDatum(i->current_value);
-            out_nulls[counter] = false;
             counter++;
             roaring_advance_uint32_iterator(i);
         }
         roaring_free_uint32_iterator(i);
 
-        //result = construct_md_array(out_datums, out_nulls, 1, card1, 1, INT4OID, sizeof(uint32_t), false, 'i');
         result = construct_array(out_datums, card1, INT4OID, sizeof(int4), true, 'i');
     }
 
