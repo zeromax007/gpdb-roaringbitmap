@@ -267,7 +267,6 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td>Return the number of offsets that are smaller or equal to a specific offset.<BR>返回Bitmap中小于等于指定Offset的基数。</td>
         <td><code>rb_rank(rb_build('{1,2,3}'),3)</code></td>
     </tr>
-<<<<<<< HEAD
     <tr>
         <td><code>rb_jaccard_index</code></td>
         <td><code>roraingbitmap<BR>roraingbitmap</code></td>
@@ -280,13 +279,6 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td><code>roraingbitmap</code></td>
         <td><code>setof integer</code></td>
         <td>Return offsets List.<BR>返回Offset List。</td>
-=======
-        <tr>
-        <td><code>rb_iterate</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>setof integer</code></td>
-        <td>Return offsets List.</td>
->>>>>>> e86f7d93c7f5488e844ab8d41c77f1558368081a
         <td><code>rb_iterate(rb_build('{1,2,3}'))</code></td>
     </tr>
 </table>

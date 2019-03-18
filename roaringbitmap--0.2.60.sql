@@ -107,18 +107,48 @@ CREATE OR REPLACE FUNCTION rb_equals(roaringbitmap, roaringbitmap)
 
 CREATE OR REPLACE FUNCTION rb_not_equals(roaringbitmap, roaringbitmap)
   RETURNS bool 
-  AS  'MODULE_PATHNAME', 'rb_not_equals'
-   LANGUAGE C STRICT;
+  AS  $$ SELECT NOT rb_equals($1, $2) $$
+   LANGUAGE SQL STRICT;
 
 CREATE OR REPLACE FUNCTION rb_intersect(roaringbitmap, roaringbitmap)
   RETURNS bool
   AS  'MODULE_PATHNAME', 'rb_intersect'
    LANGUAGE C STRICT;
 
+CREATE OR REPLACE FUNCTION rb_contains(roaringbitmap, integer)
+  RETURNS bool
+  AS  'MODULE_PATHNAME', 'rb_contains'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_contains(roaringbitmap, integer, integer)
+  RETURNS bool
+  AS  'MODULE_PATHNAME', 'rb_contains_range'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_contains(roaringbitmap, roaringbitmap)
+  RETURNS bool
+  AS  'MODULE_PATHNAME', 'rb_contains_bitmap'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_becontained(integer, roaringbitmap)
+  RETURNS bool
+  AS $$ SELECT rb_contains($2, $1) $$  
+   LANGUAGE SQL STRICT;
+
+CREATE OR REPLACE FUNCTION rb_becontained(roaringbitmap, roaringbitmap)
+  RETURNS bool
+  AS $$ SELECT rb_contains($2, $1) $$
+   LANGUAGE SQL STRICT;
+
 CREATE OR REPLACE FUNCTION rb_add(roaringbitmap, integer)
    RETURNS roaringbitmap
    AS 'MODULE_PATHNAME', 'rb_add'
    LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_add_2(integer, roaringbitmap)
+   RETURNS roaringbitmap
+   AS $$ SELECT rb_add($2, $1) $$
+   LANGUAGE SQL STRICT;
 
 CREATE OR REPLACE FUNCTION rb_add(roaringbitmap, integer, integer)
    RETURNS roaringbitmap
@@ -160,6 +190,16 @@ CREATE OR REPLACE FUNCTION rb_maximum(roaringbitmap)
    AS 'MODULE_PATHNAME', 'rb_rank'
    LANGUAGE C STRICT;
 
+ CREATE OR REPLACE FUNCTION rb_jaccard_index(roaringbitmap, roaringbitmap)
+   RETURNS float8 
+   AS 'MODULE_PATHNAME', 'rb_jaccard_index'
+   LANGUAGE C STRICT;
+
+CREATE OR REPLACE FUNCTION rb_to_array(roaringbitmap)
+   RETURNS integer[] 
+   AS 'MODULE_PATHNAME', 'rb_to_array'
+   LANGUAGE C STRICT;
+
 CREATE OR REPLACE FUNCTION rb_iterate(roaringbitmap)
    RETURNS SETOF integer 
    AS 'MODULE_PATHNAME', 'rb_iterate'
@@ -181,11 +221,6 @@ CREATE OR REPLACE FUNCTION rb_or_trans(internal, roaringbitmap)
       AS 'MODULE_PATHNAME', 'rb_or_trans'
      LANGUAGE C IMMUTABLE;
 
-CREATE AGGREGATE rb_or_agg(roaringbitmap)(
-       SFUNC = rb_or_trans,
-       STYPE = internal,
-       FINALFUNC = rb_serialize
-);
 
 -- operator -- 
 
@@ -207,12 +242,27 @@ CREATE OPERATOR # (
   PROCEDURE = rb_xor
 );
 
+CREATE OPERATOR ~ (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_andnot
+);
 
 CREATE OPERATOR + (
   LEFTARG = roaringbitmap,
   RIGHTARG = integer,
-  PROCEDURE = rb_add
+  PROCEDURE = rb_add,
+  COMMUTATOR = '+'
 );
+
+
+CREATE OPERATOR + (
+  LEFTARG = integer,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_add_2,
+  COMMUTATOR = '+'
+);
+
 
 CREATE OPERATOR - (
   LEFTARG = roaringbitmap,
@@ -249,16 +299,55 @@ CREATE OPERATOR && (
   JOIN = contjoinsel
 );
 
+CREATE OPERATOR @> (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = integer,
+  PROCEDURE = rb_contains,
+  COMMUTATOR = '<@',
+  RESTRICT = contsel,
+  JOIN = contjoinsel
+);
 
+CREATE OPERATOR @> (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_contains,
+  COMMUTATOR = '<@',
+  RESTRICT = contsel,
+  JOIN = contjoinsel
+);
+
+CREATE OPERATOR <@ (
+  LEFTARG = integer,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_becontained,
+  COMMUTATOR = '@>',
+  RESTRICT = contsel,
+  JOIN = contjoinsel
+);
+
+CREATE OPERATOR <@ (
+  LEFTARG = roaringbitmap,
+  RIGHTARG = roaringbitmap,
+  PROCEDURE = rb_becontained,
+  COMMUTATOR = '@>',
+  RESTRICT = contsel,
+  JOIN = contjoinsel
+);
 
 -- aggragations --
+
+CREATE AGGREGATE rb_or_agg(roaringbitmap)(
+       SFUNC = rb_or_trans,
+       STYPE = internal,
+       FINALFUNC = rb_serialize
+);
 
 CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
        SFUNC = rb_or_trans,
        STYPE = internal,
        FINALFUNC = rb_cardinality_trans
 );
-
 
 CREATE OR REPLACE FUNCTION rb_and_trans(internal, roaringbitmap)
      RETURNS internal

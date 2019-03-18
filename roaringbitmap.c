@@ -1103,14 +1103,15 @@ Datum
         roaring_uint32_iterator_t *i = roaring_create_iterator(r1);
         while (i->has_value)
         {
-            out_datums[counter] = PointerGetDatum(i->current_value);
+            out_datums[counter] = Int32GetDatum(i->current_value);
             out_nulls[counter] = false;
             counter++;
             roaring_advance_uint32_iterator(i);
         }
         roaring_free_uint32_iterator(i);
 
-        result = construct_md_array(out_datums, out_nulls, 1, card1, 1, INT4OID, sizeof(uint32_t), false, 'i');
+        //result = construct_md_array(out_datums, out_nulls, 1, card1, 1, INT4OID, sizeof(uint32_t), false, 'i');
+        result = construct_array(out_datums, card1, INT4OID, sizeof(int4), true, 'i');
     }
 
     roaring_bitmap_free(r1);
