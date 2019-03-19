@@ -372,7 +372,7 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td><code>roraingbitmap</code></td>
         <td><code>boolean</code></td>
         <td>Check two roaringbitmaps are intersected.<BR>判断两个Bitmap是否相交。</td>
-        <td><code>rb_build('{1,2,3}') = rb_build('{3,2,1}') </code></td>
+        <td><code>rb_build('{1,2,3}') && rb_build('{3,2,1}') </code></td>
     </tr>
     <tr>
         <td><code>@></code></td>
