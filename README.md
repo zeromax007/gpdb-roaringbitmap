@@ -39,13 +39,13 @@ INSERT INTO t1 SELECT 2,RB_BUILD_AGG(e) FROM GENERATE_SERIES(1,100) e;
 
 ## Bitmap Calculation (OR, AND, XOR, ANDNOT) Bitmap计算
 ```
-SELECT RB_OR(a.bitmap,b.bitmap) FORM (SELECT bitmap FROM t1 WHERE id = 1) AS a,(SELECT bitmap FROM t1 WHERE id = 2) AS b;
+SELECT RB_OR(a.bitmap,b.bitmap) FROM (SELECT bitmap FROM t1 WHERE id = 1) AS a,(SELECT bitmap FROM t1 WHERE id = 2) AS b;
 ```
 
 ## Bitmap Aggregate (OR, AND, XOR, BUILD) Bitmap聚合
 ```
 SELECT RB_OR_AGG(bitmap) FROM t1;
-SELECT RB_AND_AGG(bitmap) FORM t1;
+SELECT RB_AND_AGG(bitmap) FROM t1;
 SELECT RB_XOR_AGG(bitmap) FROM t1;
 SELECT RB_BUILD_AGG(e) FROM GENERATE_SERIES(1,100) e;
 ```
