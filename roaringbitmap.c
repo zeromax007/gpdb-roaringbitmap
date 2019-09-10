@@ -1107,7 +1107,7 @@ Datum
         }
         roaring_free_uint32_iterator(i);
 
-        result = construct_array(out_datums, card1, INT4OID, sizeof(int4), true, 'i');
+        result = construct_array(out_datums, card1, INT4OID, sizeof(int32), true, 'i');
     }
 
     roaring_bitmap_free(r1);
