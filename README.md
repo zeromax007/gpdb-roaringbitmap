@@ -70,225 +70,225 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
            <th>Example</th>
     </thead>
     <tr>
-        <td><code>rb_build</code></td>
-        <td><code>integer[]</code></td>
-        <td><code>roaringbitmap</code></td>
+        <td>rb_build</td>
+        <td>integer[]</td>
+        <td>roaringbitmap</td>
         <td>
-            Build a roaringbitmap from integer array.<BR>通过数组创建一个Bitmap。
+            Build a roaringbitmap from integer array.<br>通过数组创建一个Bitmap。
         </td>
-        <td><code>rb_build('{1,2,3,4,5}')</code></td>
+        <td>rb_build('{1,2,3,4,5}')</td>
     </tr>
     <tr>
-        <td><code>rb_to_array</code></td>
-        <td><code>roaringbitmap</code></td>
-        <td><code>integer[]</code></td>
+        <td>rb_to_array</td>
+        <td>roaringbitmap</td>
+        <td>integer[]</td>
         <td>
-            Bitmap to integer array.<BR>Bitmap转数组。
+            Bitmap to integer array.<br>Bitmap转数组。
         </td>
-        <td><code>rb_to_array(rb_build('{1,2,3,4,5}'))</code></td>
+        <td>rb_to_array(rb_build('{1,2,3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_and</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>roaringbitmap</code></td>
-        <td>Two roaringbitmap and calculation.<BR>And计算。</td>
-        <td><code>rb_and(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_and</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>roaringbitmap</td>
+        <td>Two roaringbitmap and calculation.<br>And计算。</td>
+        <td>rb_and(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_or</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>roaringbitmap</code></td>
-        <td>Two roaringbitmap or calculation.<BR>Or计算。</td>
-        <td><code>rb_or(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_or</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>roaringbitmap</td>
+        <td>Two roaringbitmap or calculation.<br>Or计算。</td>
+        <td>rb_or(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_xor</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>roaringbitmap</code></td>
-        <td>Two roaringbitmap xor calculation.<BR>Xor计算。</td>
-        <td><code>rb_xor(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_xor</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>roaringbitmap</td>
+        <td>Two roaringbitmap xor calculation.<br>Xor计算。</td>
+        <td>rb_xor(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_andnot</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>roaringbitmap</code></td>
-        <td>Two roaringbitmap andnot calculation.<BR>AndNot计算</td>
-        <td><code>rb_andnot(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_andnot</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>roaringbitmap</td>
+        <td>Two roaringbitmap andnot calculation.<br>AndNot计算</td>
+        <td>rb_andnot(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_cardinality</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Retrun roaringbitmap cardinality.<BR>统计基数</td>
-        <td><code>rb_cardinality(rb_build('{1,2,3,4,5}'))</code></td>
+        <td>rb_cardinality</td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>Retrun roaringbitmap cardinality.<br>统计基数</td>
+        <td>rb_cardinality(rb_build('{1,2,3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_and_cardinality</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Two roaringbitmap and calculation, return cardinality.<BR>And计算并返回基数。</td>
-        <td><code>rb_and_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_and_cardinality</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>integer</td>
+        <td>Two roaringbitmap and calculation, return cardinality.<br>And计算并返回基数。</td>
+        <td>rb_and_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_or_cardinality</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Two roaringbitmap or calculation, return cardinality.<BR>Or计算并返回基数。</td>
-        <td><code>rb_or_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_or_cardinality</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>integer</td>
+        <td>Two roaringbitmap or calculation, return cardinality.<br>Or计算并返回基数。</td>
+        <td>rb_or_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_xor_cardinality</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Two roaringbitmap xor calculation, return cardinality.<BR>Xor计算并返回基数。</td>
-        <td><code>rb_xor_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_xor_cardinality</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>integer</td>
+        <td>Two roaringbitmap xor calculation, return cardinality.<br>Xor计算并返回基数。</td>
+        <td>rb_xor_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_andnot_cardinality</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Two roaringbitmap andnot calculation, return cardinality.<BR>AndNot计算并返回基数。</td>
-        <td><code>rb_andnot_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_andnot_cardinality</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>integer</td>
+        <td>Two roaringbitmap andnot calculation, return cardinality.<br>AndNot计算并返回基数。</td>
+        <td>rb_andnot_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_is_empty</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check if roaringbitmap is empty.<BR>判断是否为空的Bitmap。</td>
-        <td><code>rb_is_empty(rb_build('{1,2,3,4,5}'))</code></td>
+        <td>rb_is_empty</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check if roaringbitmap is empty.<br>判断是否为空的Bitmap。</td>
+        <td>rb_is_empty(rb_build('{1,2,3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_equals</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check two roaringbitmap are equal.<BR>判断两个Bitmap是否相等。</td>
-        <td><code>rb_equals(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_equals</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>boolean</td>
+        <td>Check two roaringbitmap are equal.<br>判断两个Bitmap是否相等。</td>
+        <td>rb_equals(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
         <tr>
-        <td><code>rb_not_equals</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check two roaringbitmap are not equal.<BR>判断两个Bitmap是否不同。</td>
-        <td><code>rb_not_equals(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_not_equals</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>boolean</td>
+        <td>Check two roaringbitmap are not equal.<br>判断两个Bitmap是否不同。</td>
+        <td>rb_not_equals(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_intersect</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check two roaringbitmap are intersect.<BR>判断两个Bitmap是否相交。</td>
-        <td><code>rb_intersect(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_intersect</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>boolean</td>
+        <td>Check two roaringbitmap are intersect.<br>判断两个Bitmap是否相交。</td>
+        <td>rb_intersect(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_contains</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap conatins another one.<BR>判断Bitmap是否包含另外一个。</td>
-        <td><code>rb_contains(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_contains</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap conatins another one.<br>判断Bitmap是否包含另外一个。</td>
+        <td>rb_contains(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_contains</code></td>
-        <td><code>roraingbitmap<BR>integer</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap conatins a specific offset.<BR>判断Bitmap是否包含特定的Offset。</td>
-        <td><code>rb_contains(rb_build('{1,2,3}'),1)</code></td>
+        <td>rb_contains</td>
+        <td>roraingbitmap<br>integer</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap conatins a specific offset.<br>判断Bitmap是否包含特定的Offset。</td>
+        <td>rb_contains(rb_build('{1,2,3}'),1)</td>
     </tr>
     <tr>
-        <td><code>rb_contains</code></td>
-        <td><code>roraingbitmap<BR>integer<BR>integer</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap conatins a specific offsets range.<BR>判断Bitmap是否包含特定的Offset段。</td>
-        <td><code>rb_contains(rb_build('{1,2,3}'),1,3)</code></td>
+        <td>rb_contains</td>
+        <td>roraingbitmap<br>integer<br>integer</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap conatins a specific offsets range.<br>判断Bitmap是否包含特定的Offset段。</td>
+        <td>rb_contains(rb_build('{1,2,3}'),1,3)</td>
     </tr>
     <tr>
-        <td><code>rb_becontained</code></td>
-        <td><code>roraingbitmap<BR>roaringbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap is contained by another one.<BR>判断Bitmap是否被另外一个包含。</td>
-        <td><code>rb_becontained(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</code></td>
+        <td>rb_becontained</td>
+        <td>roraingbitmap<br>roaringbitmap</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap is contained by another one.<br>判断Bitmap是否被另外一个包含。</td>
+        <td>rb_becontained(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_becontained</code></td>
-        <td><code>integer<BR>roaringbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check a specific offset is contained by Bitmap.<BR>判断特定的Offset是否被Bitmap包含。</td>
-        <td><code>rb_becontained(1,rb_build('{3,4,5}'))</code></td>
+        <td>rb_becontained</td>
+        <td>integer<br>roaringbitmap</td>
+        <td>boolean</td>
+        <td>Check a specific offset is contained by Bitmap.<br>判断特定的Offset是否被Bitmap包含。</td>
+        <td>rb_becontained(1,rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
-        <td><code>rb_add</code></td>
-        <td><code>roraingbitmap<BR>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Add a specific offset to roaringbitmap.<BR>添加特定的Offset到Bitmap。</td>
-        <td><code>rb_add(rb_build('{1,2,3}'),3)</code></td>
+        <td>rb_add</td>
+        <td>roraingbitmap<br>integer</td>
+        <td>roraingbitmap</td>
+        <td>Add a specific offset to roaringbitmap.<br>添加特定的Offset到Bitmap。</td>
+        <td>rb_add(rb_build('{1,2,3}'),3)</td>
     </tr>
     <tr>
-        <td><code>rb_add</code></td>
-        <td><code>roraingbitmap<BR>integer<BR>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Add a specific offsets range to roaringbitmap.<BR>添加特定的Offset段到Bitmap。</td>
-        <td><code>rb_add(rb_build('{1,2,3}'),3,4)</code></td>
+        <td>rb_add</td>
+        <td>roraingbitmap<br>integer<br>integer</td>
+        <td>roraingbitmap</td>
+        <td>Add a specific offsets range to roaringbitmap.<br>添加特定的Offset段到Bitmap。</td>
+        <td>rb_add(rb_build('{1,2,3}'),3,4)</td>
     </tr>
     <tr>
-        <td><code>rb_remove</code></td>
-        <td><code>roraingbitmap<BR>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Remove a specific offset from roaringbitmap.<BR>从Bitmap移除特定的Offset。</td>
-        <td><code>rb_remove(rb_build('{1,2,3}'),3)</code></td>
+        <td>rb_remove</td>
+        <td>roraingbitmap<br>integer</td>
+        <td>roraingbitmap</td>
+        <td>Remove a specific offset from roaringbitmap.<br>从Bitmap移除特定的Offset。</td>
+        <td>rb_remove(rb_build('{1,2,3}'),3)</td>
     </tr>
     <tr>
-        <td><code>rb_remove</code></td>
-        <td><code>roraingbitmap<BR>integer<BR>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Remove a specific offsets rang from roaringbitmap.<BR>从Bitmap移除特定的Offset段。</td>
-        <td><code>rb_remove(rb_build('{1,2,3}'),2,3)</code></td>
+        <td>rb_remove</td>
+        <td>roraingbitmap<br>integer<br>integer</td>
+        <td>roraingbitmap</td>
+        <td>Remove a specific offsets rang from roaringbitmap.<br>从Bitmap移除特定的Offset段。</td>
+        <td>rb_remove(rb_build('{1,2,3}'),2,3)</td>
     </tr>
      <tr>
-        <td><code>rb_flip</code></td>
-        <td><code>roraingbitmap<BR>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Flip a specific offset from roaringbitmap.<BR>翻转Bitmap中特定的Offset。</td>
-        <td><code>rb_flip(rb_build('{1,2,3}'),3)</code></td>
+        <td>rb_flip</td>
+        <td>roraingbitmap<br>integer</td>
+        <td>roraingbitmap</td>
+        <td>Flip a specific offset from roaringbitmap.<br>翻转Bitmap中特定的Offset。</td>
+        <td>rb_flip(rb_build('{1,2,3}'),3)</td>
     </tr>
     <tr>
-        <td><code>rb_flip</code></td>
-        <td><code>roraingbitmap<BR>integer<BR>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Flip a specific offsets range from roaringbitmap.<BR>翻转Bitmap中特定的Offset段。</td>
-        <td><code>rb_flip(rb_build('{1,2,3}'),2,3)</code></td>
+        <td>rb_flip</td>
+        <td>roraingbitmap<br>integer<br>integer</td>
+        <td>roraingbitmap</td>
+        <td>Flip a specific offsets range from roaringbitmap.<br>翻转Bitmap中特定的Offset段。</td>
+        <td>rb_flip(rb_build('{1,2,3}'),2,3)</td>
     </tr>
     <tr>
-        <td><code>rb_minimum</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Return the smallest offset in roaringbitmap. Return -1 if the bitmap is empty.<BR>返回Bitmap中最小的Offset，如果Bitmap为空则返回-1。
-        <td><code>rb_minimum(rb_build('{1,2,3}'))</code></td>
+        <td>rb_minimum</td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>Return the smallest offset in roaringbitmap. Return -1 if the bitmap is empty.<br>返回Bitmap中最小的Offset，如果Bitmap为空则返回-1。
+        <td>rb_minimum(rb_build('{1,2,3}'))</td>
     </tr>
     <tr>
-        <td><code>rb_maximum</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Return the greatest offset in roaringbitmap. Return 0 if the bitmap is empty.<BR>返回Bitmap中最大的Offset，如果Bitmap为空则返回0。</td>
-        <td><code>rb_maximum(rb_build('{1,2,3}'))</code></td>
+        <td>rb_maximum</td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>Return the greatest offset in roaringbitmap. Return 0 if the bitmap is empty.<br>返回Bitmap中最大的Offset，如果Bitmap为空则返回0。</td>
+        <td>rb_maximum(rb_build('{1,2,3}'))</td>
     </tr>
     <tr>
-        <td><code>rb_rank</code></td>
-        <td><code>roraingbitmap<BR>integer</code></td>
-        <td><code>integer</code></td>
-        <td>Return the number of offsets that are smaller or equal to a specific offset.<BR>返回Bitmap中小于等于指定Offset的基数。</td>
-        <td><code>rb_rank(rb_build('{1,2,3}'),3)</code></td>
+        <td>rb_rank</td>
+        <td>roraingbitmap<br>integer</td>
+        <td>integer</td>
+        <td>Return the number of offsets that are smaller or equal to a specific offset.<br>返回Bitmap中小于等于指定Offset的基数。</td>
+        <td>rb_rank(rb_build('{1,2,3}'),3)</td>
     </tr>
     <tr>
-        <td><code>rb_jaccard_index</code></td>
-        <td><code>roraingbitmap<BR>roraingbitmap</code></td>
-        <td><code>float8</code></td>
-        <td>Computes the Jaccard index between two bitmaps. <BR>计算两个Bitmap之间的jaccard相似系数。</td>
-        <td><code>rb_jaccard_index(rb_build('{1,2,3}'),rb_build('{1,2,3，4}'))</code></td>
+        <td>rb_jaccard_index</td>
+        <td>roraingbitmap<br>roraingbitmap</td>
+        <td>float8</td>
+        <td>Computes the Jaccard index between two bitmaps. <br>计算两个Bitmap之间的jaccard相似系数。</td>
+        <td>rb_jaccard_index(rb_build('{1,2,3}'),rb_build('{1,2,3，4}'))</td>
     </tr>
     <tr>
-        <td><code>rb_iterate</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>setof integer</code></td>
-        <td>Return offsets List.<BR>返回Offset List。</td>
-        <td><code>rb_iterate(rb_build('{1,2,3}'))</code></td>
+        <td>rb_iterate</td>
+        <td>roraingbitmap</td>
+        <td>setof integer</td>
+        <td>Return offsets List.<br>返回Offset List。</td>
+        <td>rb_iterate(rb_build('{1,2,3}'))</td>
     </tr>
 </table>
 
@@ -303,108 +303,108 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
            <th>Example</th>
     </thead>
     <tr>
-        <td><code>&</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Two roaringbitmap and calculation.<BR>两个Bitmap And 操作。</td>
-        <td><code>rb_build('{1,2,3}') & rb_build('{1,2,3}')</code></td>
+        <td>&</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Two roaringbitmap and calculation.<br>两个Bitmap And 操作。</td>
+        <td>rb_build('{1,2,3}') & rb_build('{1,2,3}')</td>
     </tr>
     <tr>
-        <td><code>|</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Two roaringbitmap or calculation.<BR>两个Bitmap Or 操作。</td>
-        <td><code>rb_build('{1,2,3}') | rb_build('{1,2,3}')</code></td>
+        <td>|</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Two roaringbitmap or calculation.<br>两个Bitmap Or 操作。</td>
+        <td>rb_build('{1,2,3}') | rb_build('{1,2,3}')</td>
     </tr>
     <tr>
-        <td><code>#</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Two roaringbitmap xor calculation.<BR>两个Bitmap Xor 操作。</td>
-        <td><code>rb_build('{1,2,3}') # rb_build('{1,2,3}')</code></td>
+        <td>#</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Two roaringbitmap xor calculation.<br>两个Bitmap Xor 操作。</td>
+        <td>rb_build('{1,2,3}') # rb_build('{1,2,3}')</td>
     </tr>
     <tr>
-        <td><code>~</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Two roaringbitmap andnot calculation.<BR>两个Bitmap Andnot 操作。</td>
-        <td><code>rb_build('{1,2,3}') ~ rb_build('{1,2,3}')</code></td>
+        <td>~</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Two roaringbitmap andnot calculation.<br>两个Bitmap Andnot 操作。</td>
+        <td>rb_build('{1,2,3}') ~ rb_build('{1,2,3}')</td>
     </tr>
     <tr>
-        <td><code>+</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>intger</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Add a specific offset from roaringbitmap.<BR>向Bitmap中添加特定的Offset。</td>
-        <td><code>rb_build('{1,2,3}') + 4</code></td>
+        <td>+</td>
+        <td>roraingbitmap</td>
+        <td>intger</td>
+        <td>roraingbitmap</td>
+        <td>Add a specific offset from roaringbitmap.<br>向Bitmap中添加特定的Offset。</td>
+        <td>rb_build('{1,2,3}') + 4</td>
     </tr>
     <tr>
-        <td><code>+</code></td>
-        <td><code>intger</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Add a specific offset from roaringbitmap.<BR>向Bitmap添加特定的Offset。</td>
-        <td><code>4 + rb_build('{1,2,3}') </code></td>
+        <td>+</td>
+        <td>intger</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Add a specific offset from roaringbitmap.<br>向Bitmap添加特定的Offset。</td>
+        <td>4 + rb_build('{1,2,3}') </td>
     </tr>
     <tr>
-        <td><code>-</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>intger</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Remove a specific offset from roaringbitmap.<BR>从Bitmap移除特定的Offset。</td>
-        <td><code>rb_build('{1,2,3}') - 1</code></td>
+        <td>-</td>
+        <td>roraingbitmap</td>
+        <td>intger</td>
+        <td>roraingbitmap</td>
+        <td>Remove a specific offset from roaringbitmap.<br>从Bitmap移除特定的Offset。</td>
+        <td>rb_build('{1,2,3}') - 1</td>
     </tr>
     <tr>
-        <td><code>=</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check two roaringbitmap are equal.<BR>判断两个Bitmap是否相等。</td>
-        <td><code>rb_build('{1,2,3}') = rb_build('{3,2,1}') </code></td>
+        <td>=</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check two roaringbitmap are equal.<br>判断两个Bitmap是否相等。</td>
+        <td>rb_build('{1,2,3}') = rb_build('{3,2,1}') </td>
     </tr>
     <tr>
-        <td><code>&&</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check two roaringbitmaps are intersected.<BR>判断两个Bitmap是否相交。</td>
-        <td><code>rb_build('{1,2,3}') && rb_build('{3,2,1}') </code></td>
+        <td>&&</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check two roaringbitmaps are intersected.<br>判断两个Bitmap是否相交。</td>
+        <td>rb_build('{1,2,3}') && rb_build('{3,2,1}') </td>
     </tr>
     <tr>
-        <td><code>@></code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap conatins another one.<BR>判断Bitmap是否包含另外一个</td>
-        <td><code>rb_build('{1,2,3}') @> rb_build('{3,1}') </code></td>
+        <td>@></td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap conatins another one.<br>判断Bitmap是否包含另外一个</td>
+        <td>rb_build('{1,2,3}') @> rb_build('{3,1}') </td>
     </tr>
     <tr>
-        <td><code>@></code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap conatins a specific offset.<BR>判断Bitmap是否包含特定的Offset。</td>
-        <td><code>rb_build('{1,2,3}') @> 1 </code></td>
+        <td>@></td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap conatins a specific offset.<br>判断Bitmap是否包含特定的Offset。</td>
+        <td>rb_build('{1,2,3}') @> 1 </td>
     </tr>
     <tr>
-        <td><code><@</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check roaringbitmap is contained by another one.<BR>判断Bitmap是否被另外一个包含。</td>
-        <td><code>rb_build('{1,3}') <@ rb_build('{3,2,1}') </code></td>
+        <td><@</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check roaringbitmap is contained by another one.<br>判断Bitmap是否被另外一个包含。</td>
+        <td>rb_build('{1,3}') <@ rb_build('{3,2,1}') </td>
     </tr>
     <tr>
-        <td><code><@</code></td>
-        <td><code>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>boolean</code></td>
-        <td>Check a specific offset is contained by Bitmap.<BR>判断特定的Offset是否被Bitmap包含。</td>
-        <td><code>1 <@ rb_build('{1,2,3}')  </code></td>
+        <td><@</td>
+        <td>integer</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check a specific offset is contained by Bitmap.<br>判断特定的Offset是否被Bitmap包含。</td>
+        <td>1 <@ rb_build('{1,2,3}')  </td>
     </tr>
 </table>
 
@@ -418,52 +418,52 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
            <th>Example</th>
     </thead>
     <tr>
-        <td><code>rb_build_agg</code></td>
-        <td><code>integer</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Build a roaringbitmap from a integer set.<BR>将Offset聚合成bitmap。</td>
-        <td><code>rb_build_agg(1)</code></td>
+        <td>rb_build_agg</td>
+        <td>integer</td>
+        <td>roraingbitmap</td>
+        <td>Build a roaringbitmap from a integer set.<br>将Offset聚合成bitmap。</td>
+        <td>rb_build_agg(1)</td>
     </tr> 
     <tr>
-        <td><code>rb_or_agg</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Or Aggregate calculations from a roraingbitmap set.<BR>Or 聚合计算。</td>
-        <td><code>rb_or_agg(rb_build('{1,2,3}'))</code></td>
+        <td>rb_or_agg</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Or Aggregate calculations from a roraingbitmap set.<br>Or 聚合计算。</td>
+        <td>rb_or_agg(rb_build('{1,2,3}'))</td>
     </tr>
     <tr>
-        <td><code>rb_and_agg</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>And Aggregate calculations from a roraingbitmap set.<BR>And 聚合计算。</td>
-        <td><code>rb_and_agg(rb_build('{1,2,3}'))</code></td>
+        <td>rb_and_agg</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>And Aggregate calculations from a roraingbitmap set.<br>And 聚合计算。</td>
+        <td>rb_and_agg(rb_build('{1,2,3}'))</td>
     </tr>
     <tr>
-        <td><code>rb_xor_agg</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td>Xor Aggregate calculations from a roraingbitmap set.<BR>Xor 聚合计算。</td>
-        <td><code>rb_xor_agg(rb_build('{1,2,3}'))</code></td>
+        <td>rb_xor_agg</td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>Xor Aggregate calculations from a roraingbitmap set.<br>Xor 聚合计算。</td>
+        <td>rb_xor_agg(rb_build('{1,2,3}'))</td>
     </tr>    
     <tr>
-        <td><code>rb_or_cardinality_agg</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Or Aggregate calculations from a roraingbitmap set, return cardinality.<BR>Or 聚合计算并返回其基数。</td>
-        <td><code>rb_or_cardinality_agg(rb_build('{1,2,3}'))</code></td>
+        <td>rb_or_cardinality_agg</td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>Or Aggregate calculations from a roraingbitmap set, return cardinality.<br>Or 聚合计算并返回其基数。</td>
+        <td>rb_or_cardinality_agg(rb_build('{1,2,3}'))</td>
     </tr>   
     <tr>
-        <td><code>rb_and_cardinality_agg</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>And Aggregate calculations from a roraingbitmap set, return cardinality.<BR>And 聚合计算并返回其基数。</td>
-        <td><code>rb_and_cardinality_agg(rb_build('{1,2,3}'))</code></td>
+        <td>rb_and_cardinality_agg</td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>And Aggregate calculations from a roraingbitmap set, return cardinality.<br>And 聚合计算并返回其基数。</td>
+        <td>rb_and_cardinality_agg(rb_build('{1,2,3}'))</td>
     </tr>  
     <tr>
-        <td><code>rb_xor_cardinality_agg</code></td>
-        <td><code>roraingbitmap</code></td>
-        <td><code>integer</code></td>
-        <td>Xor Aggregate calculations from a roraingbitmap set, return cardinality.<BR>Xor 聚合计算并返回其基数。</td>
-        <td><code>rb_xor_cardinality_agg(rb_build('{1,2,3}'))</code></td>
+        <td>rb_xor_cardinality_agg</td>
+        <td>roraingbitmap</td>
+        <td>integer</td>
+        <td>Xor Aggregate calculations from a roraingbitmap set, return cardinality.<br>Xor 聚合计算并返回其基数。</td>
+        <td>rb_xor_cardinality_agg(rb_build('{1,2,3}'))</td>
     </tr>
 </table>
