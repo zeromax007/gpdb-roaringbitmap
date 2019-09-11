@@ -1,6 +1,6 @@
 --- Create by ZEROMAX on 2017/3/20 ---
 
-SET search_path = public;
+SET search_path = pg_catalog;
 
 --- data type --
 

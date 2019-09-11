@@ -1,4 +1,4 @@
-/* auto-generated on Fri Mar 15 10:33:21 CST 2019. Do not edit! */
+/* auto-generated on Wed Sep 11 23:36:34 CST 2019. Do not edit! */
 #include "roaring.h"
 
 /* used for http://dmalloc.com/ Dmalloc - Debug Malloc Library */
@@ -6,7 +6,7 @@
 #include "dmalloc.h"
 #endif
 
-/* begin file /data/zeromax/CRoaring-0.2.60/src/array_util.c */
+/* begin file src/array_util.c */
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -515,6 +515,10 @@ int32_t intersect_vector16_cardinality(const uint16_t *__restrict__ A,
     return (int32_t)count;
 }
 
+/////////
+// Warning:
+// This function may not be safe if A == C or B == C.
+/////////
 int32_t difference_vector16(const uint16_t *__restrict__ A, size_t s_a,
                             const uint16_t *__restrict__ B, size_t s_b,
                             uint16_t *C) {
@@ -638,7 +642,16 @@ int32_t difference_vector16(const uint16_t *__restrict__ A, size_t s_a,
         }
     }
     if (i_a < s_a) {
-        memmove(C + count, A + i_a, sizeof(uint16_t) * (s_a - i_a));
+        if(C == A) {
+          assert(count <= i_a);
+          if(count < i_a) {
+            memmove(C + count, A + i_a, sizeof(uint16_t) * (s_a - i_a));
+          }
+        } else {
+           for(size_t i = 0; i < (s_a - i_a); i++) {
+                C[count + i] = A[i + i_a];
+           }
+        }
         count += (int32_t)(s_a - i_a);
     }
     return count;
@@ -1553,6 +1566,7 @@ static int uint16_compare(const void *a, const void *b) {
 }
 
 // a one-pass SSE union algorithm
+// This function may not be safe if array1 == output or array2 == output.
 uint32_t union_vector16(const uint16_t *__restrict__ array1, uint32_t length1,
                         const uint16_t *__restrict__ array2, uint32_t length2,
                         uint16_t *__restrict__ output) {
@@ -1946,8 +1960,8 @@ bool memequals(const void *s1, const void *s2, size_t n) {
     return memcmp(s1, s2, n) == 0;
 #endif
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/array_util.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/bitset_util.c */
+/* end file src/array_util.c */
+/* begin file src/bitset_util.c */
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -2874,8 +2888,8 @@ void bitset_flip_list(void *bitset, const uint16_t *list, uint64_t length) {
         list++;
     }
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/bitset_util.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/array.c */
+/* end file src/bitset_util.c */
+/* begin file src/containers/array.c */
 /*
  * array.c
  *
@@ -3063,9 +3077,15 @@ void array_container_andnot(const array_container_t *array_1,
     if (out->capacity < array_1->cardinality)
         array_container_grow(out, array_1->cardinality, false);
 #ifdef ROARING_VECTOR_OPERATIONS_ENABLED
-    out->cardinality =
-        difference_vector16(array_1->array, array_1->cardinality,
+    if((out != array_1) && (out != array_2)) {
+      out->cardinality =
+          difference_vector16(array_1->array, array_1->cardinality,
                             array_2->array, array_2->cardinality, out->array);
+     } else {
+      out->cardinality =
+        difference_uint16(array_1->array, array_1->cardinality, array_2->array,
+                          array_2->cardinality, out->array);
+     }
 #else
     out->cardinality =
         difference_uint16(array_1->array, array_1->cardinality, array_2->array,
@@ -3371,8 +3391,8 @@ bool array_container_iterate64(const array_container_t *cont, uint32_t base,
             return false;
     return true;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/array.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/bitset.c */
+/* end file src/containers/array.c */
+/* begin file src/containers/bitset.c */
 /*
  * bitset.c
  *
@@ -3392,7 +3412,7 @@ extern inline void bitset_container_set(bitset_container_t *bitset, uint16_t pos
 extern inline void bitset_container_unset(bitset_container_t *bitset, uint16_t pos);
 extern inline bool bitset_container_get(const bitset_container_t *bitset,
                                         uint16_t pos);
-extern inline int32_t bitset_container_serialized_size_in_bytes();
+extern inline int32_t bitset_container_serialized_size_in_bytes(void);
 extern inline bool bitset_container_add(bitset_container_t *bitset, uint16_t pos);
 extern inline bool bitset_container_remove(bitset_container_t *bitset, uint16_t pos);
 extern inline bool bitset_container_contains(const bitset_container_t *bitset,
@@ -3420,7 +3440,7 @@ bitset_container_t *bitset_container_create(void) {
         return NULL;
     }
     // sizeof(__m256i) == 32
-    bitset->array = (uint64_t *)aligned_malloc(
+    bitset->array = (uint64_t *)roaring_bitmap_aligned_malloc(
         32, sizeof(uint64_t) * BITSET_CONTAINER_SIZE_IN_WORDS);
     if (!bitset->array) {
         free(bitset);
@@ -3469,7 +3489,7 @@ void bitset_container_add_from_range(bitset_container_t *bitset, uint32_t min,
 /* Free memory. */
 void bitset_container_free(bitset_container_t *bitset) {
     if(bitset->array != NULL) {// Jon Strabala reports that some tools complain otherwise
-      aligned_free(bitset->array);
+      roaring_bitmap_aligned_free(bitset->array);
       bitset->array = NULL; // pedantic
     }
     free(bitset);
@@ -3484,7 +3504,7 @@ bitset_container_t *bitset_container_clone(const bitset_container_t *src) {
         return NULL;
     }
     // sizeof(__m256i) == 32
-    bitset->array = (uint64_t *)aligned_malloc(
+    bitset->array = (uint64_t *)roaring_bitmap_aligned_malloc(
         32, sizeof(uint64_t) * BITSET_CONTAINER_SIZE_IN_WORDS);
     if (!bitset->array) {
         free(bitset);
@@ -3918,7 +3938,7 @@ void* bitset_container_deserialize(const char *buf, size_t buf_len) {
   if((ptr = (bitset_container_t *)malloc(sizeof(bitset_container_t))) != NULL) {
     memcpy(ptr, buf, sizeof(bitset_container_t));
     // sizeof(__m256i) == 32
-    ptr->array = (uint64_t *) aligned_malloc(32, l);
+    ptr->array = (uint64_t *) roaring_bitmap_aligned_malloc(32, l);
     if (! ptr->array) {
         free(ptr);
         return NULL;
@@ -4060,19 +4080,16 @@ uint16_t bitset_container_maximum(const bitset_container_t *container) {
 
 /* Returns the number of values equal or smaller than x */
 int bitset_container_rank(const bitset_container_t *container, uint16_t x) {
-  uint32_t x32 = x;
+  // credit: aqrit
   int sum = 0;
-  uint32_t k = 0;
-  for (; k + 63 <= x32; k += 64)  {
-    sum += hamming(container->array[k / 64]);
+  int i = 0;
+  for (int end = x / 64; i < end; i++){
+    sum += hamming(container->array[i]);
   }
-  // at this point, we have covered everything up to k, k not included.
-  // we have that k < x, but not so large that k+63<=x
-  // k is a power of 64
-  int bitsleft = x32 - k + 1;// will be in [0,64)
-  uint64_t leftoverword = container->array[k / 64];// k / 64 should be within scope
-  leftoverword = leftoverword & ((UINT64_C(1) << bitsleft) - 1);
-  sum += hamming(leftoverword);
+  uint64_t lastword = container->array[i];
+  uint64_t lastpos = UINT64_C(1) << (x % 64);
+  uint64_t mask = lastpos + lastpos - 1; // smear right
+  sum += hamming(lastword & mask);
   return sum;
 }
 
@@ -4090,8 +4107,8 @@ int bitset_container_index_equalorlarger(const bitset_container_t *container, ui
   }
   return k * 64 + __builtin_ctzll(word);
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/bitset.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/containers.c */
+/* end file src/containers/bitset.c */
+/* begin file src/containers/containers.c */
 
 
 extern inline const void *container_unwrap_shared(
@@ -4361,8 +4378,8 @@ extern inline void *container_lazy_ixor(void *c1, uint8_t type1, const void *c2,
 
 extern inline void *container_andnot(const void *c1, uint8_t type1, const void *c2,
                               uint8_t type2, uint8_t *result_type);
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/containers.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/convert.c */
+/* end file src/containers/containers.c */
+/* begin file src/containers/convert.c */
 #include <stdio.h>
 
 
@@ -4669,8 +4686,8 @@ bitset_container_t *bitset_container_from_run_range(const run_container_t *run,
     bitset->cardinality = union_cardinality;
     return bitset;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/convert.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_andnot.c */
+/* end file src/containers/convert.c */
+/* begin file src/containers/mixed_andnot.c */
 /*
  * mixed_andnot.c.  More methods since operation is not symmetric,
  * except no "wide" andnot , so no lazy options motivated.
@@ -5172,8 +5189,8 @@ bool bitset_bitset_container_iandnot(bitset_container_t *src_1,
         return true;
     }
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_andnot.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_equal.c */
+/* end file src/containers/mixed_andnot.c */
+/* begin file src/containers/mixed_equal.c */
 
 bool array_container_equal_bitset(const array_container_t* container1,
                                   const bitset_container_t* container2) {
@@ -5250,8 +5267,8 @@ bool run_container_equals_bitset(const run_container_t* container1,
 
     return true;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_equal.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_intersection.c */
+/* end file src/containers/mixed_equal.c */
+/* begin file src/containers/mixed_intersection.c */
 /*
  * mixed_intersection.c
  *
@@ -5592,8 +5609,8 @@ bool bitset_bitset_container_intersection_inplace(
     }
     return false;  // not a bitset
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_intersection.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_negation.c */
+/* end file src/containers/mixed_intersection.c */
+/* begin file src/containers/mixed_negation.c */
 /*
  * mixed_negation.c
  *
@@ -5921,8 +5938,8 @@ int run_container_negation_range_inplace(run_container_t *src,
 
     return return_typecode;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_negation.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_subset.c */
+/* end file src/containers/mixed_negation.c */
+/* begin file src/containers/mixed_subset.c */
 
 bool array_container_is_subset_bitset(const array_container_t* container1,
                                       const bitset_container_t* container2) {
@@ -6054,8 +6071,8 @@ bool bitset_container_is_subset_run(const bitset_container_t* container1,
     }
     return true;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_subset.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_union.c */
+/* end file src/containers/mixed_subset.c */
+/* begin file src/containers/mixed_union.c */
 /*
  * mixed_union.c
  *
@@ -6252,7 +6269,7 @@ bool array_array_container_inplace_union(array_container_t *src_1,
           return false;  // not a bitset
         } else {
           memmove(src_1->array + src_2->cardinality, src_1->array, src_1->cardinality * sizeof(uint16_t));
-          src_1->cardinality = (int32_t)fast_union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
+          src_1->cardinality = (int32_t)union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
                                   src_2->array, src_2->cardinality, src_1->array);
           return false; // not a bitset
         }
@@ -6324,7 +6341,7 @@ bool array_array_container_lazy_inplace_union(array_container_t *src_1,
           return false;  // not a bitset
         } else {
           memmove(src_1->array + src_2->cardinality, src_1->array, src_1->cardinality * sizeof(uint16_t));
-          src_1->cardinality = (int32_t)fast_union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
+          src_1->cardinality = (int32_t)union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
                                   src_2->array, src_2->cardinality, src_1->array);
           return false; // not a bitset
         }
@@ -6339,8 +6356,8 @@ bool array_array_container_lazy_inplace_union(array_container_t *src_1,
     }
     return returnval;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_union.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_xor.c */
+/* end file src/containers/mixed_union.c */
+/* begin file src/containers/mixed_xor.c */
 /*
  * mixed_xor.c
  */
@@ -6681,8 +6698,8 @@ int run_run_container_ixor(run_container_t *src_1, const run_container_t *src_2,
     run_container_free(src_1);
     return ans;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/mixed_xor.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/containers/run.c */
+/* end file src/containers/mixed_xor.c */
+/* begin file src/containers/run.c */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7517,8 +7534,8 @@ int run_container_rank(const run_container_t *container, uint16_t x) {
     }
     return sum;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/containers/run.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/roaring.c */
+/* end file src/containers/run.c */
+/* begin file src/roaring.c */
 #include <assert.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -8712,8 +8729,8 @@ uint64_t roaring_bitmap_range_cardinality(const roaring_bitmap_t *ra,
     range_end--; // make range_end inclusive
     // now we have: 0 <= range_start <= range_end <= UINT32_MAX
 
-    int minhb = range_start >> 16;
-    int maxhb = range_end >> 16;
+    uint16_t minhb = range_start >> 16;
+    uint16_t maxhb = range_end >> 16;
 
     uint64_t card = 0;
 
@@ -10451,14 +10468,15 @@ roaring_bitmap_frozen_view(const char *buf, size_t length) {
                 break;
             }
             default:
+                free(arena);
                 return NULL;
         }
     }
 
     return rb;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/roaring.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/roaring_array.c */
+/* end file src/roaring.c */
+/* begin file src/roaring_array.c */
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -11375,8 +11393,8 @@ bool ra_portable_deserialize(roaring_array_t *answer, const char *buf, const siz
     }
     return true;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/roaring_array.c */
-/* begin file /data/zeromax/CRoaring-0.2.60/src/roaring_priority_queue.c */
+/* end file src/roaring_array.c */
+/* begin file src/roaring_priority_queue.c */
 
 struct roaring_pq_element_s {
     uint64_t size;
@@ -11617,4 +11635,4 @@ roaring_bitmap_t *roaring_bitmap_or_many_heap(uint32_t number,
     pq_free(pq);
     return answer;
 }
-/* end file /data/zeromax/CRoaring-0.2.60/src/roaring_priority_queue.c */
+/* end file src/roaring_priority_queue.c */
