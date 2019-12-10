@@ -133,8 +133,8 @@ CREATE
   OR REPLACE FUNCTION rb_deserialize(bytea, internal) RETURNS internal AS 'MODULE_PATHNAME',
   'rb_deserialize' LANGUAGE C IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_cardinality_trans(internal) RETURNS integer AS 'MODULE_PATHNAME',
-  'rb_cardinality_trans' LANGUAGE C IMMUTABLE;
+  OR REPLACE FUNCTION rb_cardinality_final(internal) RETURNS integer AS 'MODULE_PATHNAME',
+  'rb_cardinality_final' LANGUAGE C IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_or_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
   'rb_or_trans' LANGUAGE C IMMUTABLE;
