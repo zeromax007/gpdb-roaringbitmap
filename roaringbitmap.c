@@ -717,6 +717,54 @@ Datum
     PG_RETURN_POINTER(r1);
 }
 
+//bitmap or combine
+PG_FUNCTION_INFO_V1(rb_or_combine);
+Datum rb_or_combine(PG_FUNCTION_ARGS);
+
+Datum
+    rb_or_combine(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    MemoryContext oldcontext;
+    roaring_bitmap_t *r1;
+    roaring_bitmap_t *r2;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                 errmsg("rb_or_combine outside transition context")));
+
+    if (PG_ARGISNULL(1))
+    {
+        if (PG_ARGISNULL(0))
+        {
+            PG_RETURN_NULL();
+        }
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+    else
+    {
+        oldcontext = MemoryContextSwitchTo(aggctx);
+
+        r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
+
+        if (PG_ARGISNULL(0))
+        {
+            r1 = roaring_bitmap_copy(r2);
+        }
+        else
+        {
+            r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+            roaring_bitmap_or_inplace(r1, r2);
+        }
+
+        MemoryContextSwitchTo(oldcontext);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
 //bitmap and trans
 PG_FUNCTION_INFO_V1(rb_and_trans);
 Datum rb_and_trans(PG_FUNCTION_ARGS);
@@ -761,6 +809,54 @@ Datum
             roaring_bitmap_and_inplace(r1, r2);
         }
         roaring_bitmap_free(r2);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
+//bitmap and combine
+PG_FUNCTION_INFO_V1(rb_and_combine);
+Datum rb_and_combine(PG_FUNCTION_ARGS);
+
+Datum
+    rb_and_combine(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    MemoryContext oldcontext;
+    roaring_bitmap_t *r1;
+    roaring_bitmap_t *r2;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                 errmsg("rb_and_combine outside transition context")));
+
+    if (PG_ARGISNULL(1))
+    {
+        if (PG_ARGISNULL(0))
+        {
+            PG_RETURN_NULL();
+        }
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+    else
+    {
+        oldcontext = MemoryContextSwitchTo(aggctx);
+
+        r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
+
+        if (PG_ARGISNULL(0))
+        {
+            r1 = roaring_bitmap_copy(r2);
+        }
+        else
+        {
+            r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+            roaring_bitmap_and_inplace(r1, r2);
+        }
+
+        MemoryContextSwitchTo(oldcontext);
     }
 
     PG_RETURN_POINTER(r1);
@@ -815,6 +911,54 @@ Datum
     PG_RETURN_POINTER(r1);
 }
 
+//bitmap xor combine
+PG_FUNCTION_INFO_V1(rb_xor_combine);
+Datum rb_xor_combine(PG_FUNCTION_ARGS);
+
+Datum
+    rb_xor_combine(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    MemoryContext oldcontext;
+    roaring_bitmap_t *r1;
+    roaring_bitmap_t *r2;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                 errmsg("rb_xor_combine outside transition context")));
+
+    if (PG_ARGISNULL(1))
+    {
+        if (PG_ARGISNULL(0))
+        {
+            PG_RETURN_NULL();
+        }
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+    else
+    {
+        oldcontext = MemoryContextSwitchTo(aggctx);
+
+        r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
+
+        if (PG_ARGISNULL(0))
+        {
+            r1 = roaring_bitmap_copy(r2);
+        }
+        else
+        {
+            r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+            roaring_bitmap_xor_inplace(r1, r2);
+        }
+
+        MemoryContextSwitchTo(oldcontext);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
 //bitmap build trans
 PG_FUNCTION_INFO_V1(rb_build_trans);
 Datum rb_build_trans(PG_FUNCTION_ARGS);
@@ -861,7 +1005,6 @@ Datum
     rb_serialize(PG_FUNCTION_ARGS)
 {
     MemoryContext aggctx;
-
     roaring_bitmap_t *r1;
 
     // We must be called as a transition routine or we fail.
@@ -889,12 +1032,46 @@ Datum
     }
 }
 
-//bitmap Cardinality trans
-PG_FUNCTION_INFO_V1(rb_cardinality_trans);
-Datum rb_cardinality_trans(PG_FUNCTION_ARGS);
+//bitmap Deserialize
+PG_FUNCTION_INFO_V1(rb_deserialize);
+Datum rb_deserialize(PG_FUNCTION_ARGS);
 
 Datum
-    rb_cardinality_trans(PG_FUNCTION_ARGS)
+    rb_deserialize(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    roaring_bitmap_t *r1;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                 errmsg("rb_deserialize outside aggregate context")));
+
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
+    {
+        PG_RETURN_NULL();
+    }
+    else
+    {
+        bytea *serializedbytes = PG_GETARG_BYTEA_P(0);
+        r1 = roaring_bitmap_portable_deserialize(VARDATA(serializedbytes));
+        if (!r1)
+            ereport(ERROR,
+                    (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED),
+                     errmsg("bitmap format is error")));
+
+        PG_RETURN_POINTER(r1);
+    }
+}
+
+//bitmap Cardinality Final
+PG_FUNCTION_INFO_V1(rb_cardinality_final);
+Datum rb_cardinality_final(PG_FUNCTION_ARGS);
+
+Datum
+    rb_cardinality_final(PG_FUNCTION_ARGS)
 {
     MemoryContext aggctx;
 
@@ -904,7 +1081,7 @@ Datum
     if (!AggCheckCallContext(fcinfo, &aggctx))
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
-                 errmsg("rb_cardinality_trans outside aggregate context")));
+                 errmsg("rb_cardinality_final outside aggregate context")));
 
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
