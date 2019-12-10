@@ -123,21 +123,6 @@ CREATE
 CREATE
   OR REPLACE FUNCTION rb_iterate(roaringbitmap) RETURNS SETOF integer AS 'MODULE_PATHNAME',
   'rb_iterate' LANGUAGE C STRICT;
-CREATE
-  OR REPLACE FUNCTION rb_final(internal) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
-  'rb_serialize' LANGUAGE C IMMUTABLE;
-CREATE
-  OR REPLACE FUNCTION rb_serialize(internal) RETURNS bytea AS 'MODULE_PATHNAME',
-  'rb_serialize' LANGUAGE C IMMUTABLE;
-CREATE
-  OR REPLACE FUNCTION rb_deserialize(bytea, internal) RETURNS internal AS 'MODULE_PATHNAME',
-  'rb_deserialize' LANGUAGE C IMMUTABLE;
-CREATE
-  OR REPLACE FUNCTION rb_cardinality_final(internal) RETURNS integer AS 'MODULE_PATHNAME',
-  'rb_cardinality_final' LANGUAGE C IMMUTABLE;
-CREATE
-  OR REPLACE FUNCTION rb_or_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
-  'rb_or_trans' LANGUAGE C IMMUTABLE;
 -- operator --
   CREATE OPERATOR & (
     LEFTARG = roaringbitmap,
@@ -194,7 +179,7 @@ CREATE OPERATOR <> (
   RESTRICT = neqsel,
   JOIN = neqjoinsel
 );
-CREATE OPERATOR & & (
+CREATE OPERATOR && (
   LEFTARG = roaringbitmap,
   RIGHTARG = roaringbitmap,
   PROCEDURE = rb_intersect,
@@ -202,7 +187,7 @@ CREATE OPERATOR & & (
   RESTRICT = contsel,
   JOIN = contjoinsel
 );
-CREATE OPERATOR @ > (
+CREATE OPERATOR @> (
   LEFTARG = roaringbitmap,
   RIGHTARG = integer,
   PROCEDURE = rb_contains,
@@ -210,7 +195,7 @@ CREATE OPERATOR @ > (
   RESTRICT = contsel,
   JOIN = contjoinsel
 );
-CREATE OPERATOR @ > (
+CREATE OPERATOR @> (
   LEFTARG = roaringbitmap,
   RIGHTARG = roaringbitmap,
   PROCEDURE = rb_contains,
@@ -218,7 +203,7 @@ CREATE OPERATOR @ > (
   RESTRICT = contsel,
   JOIN = contjoinsel
 );
-CREATE OPERATOR < @ (
+CREATE OPERATOR <@ (
   LEFTARG = integer,
   RIGHTARG = roaringbitmap,
   PROCEDURE = rb_becontained,
@@ -226,7 +211,7 @@ CREATE OPERATOR < @ (
   RESTRICT = contsel,
   JOIN = contjoinsel
 );
-CREATE OPERATOR < @ (
+CREATE OPERATOR <@ (
   LEFTARG = roaringbitmap,
   RIGHTARG = roaringbitmap,
   PROCEDURE = rb_becontained,
@@ -235,47 +220,94 @@ CREATE OPERATOR < @ (
   JOIN = contjoinsel
 );
 -- aggragations --
+CREATE
+OR REPLACE FUNCTION rb_and_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_and_trans' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_or_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_or_trans' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_xor_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_xor_trans' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_and_combine(internal, internal) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_and_combine' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_or_combine(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_or_combine' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_xor_combine(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_xor_combine' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_final(internal) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
+'rb_serialize' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_cardinality_final(internal) RETURNS integer AS 'MODULE_PATHNAME',
+'rb_cardinality_final' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_serialize(internal) RETURNS bytea AS 'MODULE_PATHNAME',
+'rb_serialize' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_deserialize(bytea, internal) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_deserialize' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_build_trans(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_build_trans' LANGUAGE C;
+
 CREATE AGGREGATE rb_or_agg(roaringbitmap)(
   SFUNC = rb_or_trans,
   STYPE = internal,
-  FINALFUNC = rb_serialize
+  FINALFUNC = rb_final,
+  COMBINEFUNC = rb_or_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );
 CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
   SFUNC = rb_or_trans,
   STYPE = internal,
-  FINALFUNC = rb_cardinality_trans
+  FINALFUNC = rb_cardinality_final,
+  COMBINEFUNC = rb_or_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );
-CREATE
-OR REPLACE FUNCTION rb_and_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
-'rb_and_trans' LANGUAGE C IMMUTABLE;
 CREATE AGGREGATE rb_and_agg(roaringbitmap)(
   SFUNC = rb_and_trans,
   STYPE = internal,
-  FINALFUNC = rb_serialize
+  FINALFUNC = rb_final,
+  COMBINEFUNC = rb_and_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );
 CREATE AGGREGATE rb_and_cardinality_agg(roaringbitmap)(
   SFUNC = rb_and_trans,
   STYPE = internal,
-  FINALFUNC = rb_cardinality_trans
+  FINALFUNC = rb_cardinality_final,
+  COMBINEFUNC = rb_and_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );
-CREATE
-OR REPLACE FUNCTION rb_xor_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
-'rb_xor_trans' LANGUAGE C IMMUTABLE;
 CREATE AGGREGATE rb_xor_agg(roaringbitmap)(
   SFUNC = rb_xor_trans,
   STYPE = internal,
-  FINALFUNC = rb_serialize
+  FINALFUNC = rb_final,
+  COMBINEFUNC = rb_xor_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );
 CREATE AGGREGATE rb_xor_cardinality_agg(roaringbitmap)(
   SFUNC = rb_xor_trans,
   STYPE = internal,
-  FINALFUNC = rb_cardinality_trans
+  FINALFUNC = rb_cardinality_final,
+  COMBINEFUNC = rb_xor_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );
-CREATE
-OR REPLACE FUNCTION rb_build_trans(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
-'rb_build_trans' LANGUAGE C;
+
 CREATE AGGREGATE rb_build_agg(integer)(
   SFUNC = rb_build_trans,
   STYPE = internal,
-  FINALFUNC = rb_serialize
+  FINALFUNC = rb_final,
+  COMBINEFUNC = rb_or_combine,
+  SERIALFUNC = rb_serialize,
+  DESERIALFUNC = rb_deserialize
 );

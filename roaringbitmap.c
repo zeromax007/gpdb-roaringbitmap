@@ -725,7 +725,6 @@ Datum
     rb_or_combine(PG_FUNCTION_ARGS)
 {
     MemoryContext aggctx;
-    MemoryContext oldcontext;
     roaring_bitmap_t *r1;
     roaring_bitmap_t *r2;
 
@@ -733,33 +732,24 @@ Datum
     if (!AggCheckCallContext(fcinfo, &aggctx))
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
-                 errmsg("rb_or_combine outside transition context")));
+                 errmsg("rb_or_trans outside transition context")));
 
-    if (PG_ARGISNULL(1))
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
     {
-        if (PG_ARGISNULL(0))
-        {
-            PG_RETURN_NULL();
-        }
-        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+        r1 = setup_roaringbitmap(aggctx);
     }
     else
     {
-        oldcontext = MemoryContextSwitchTo(aggctx);
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
 
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+    {
         r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
-
-        if (PG_ARGISNULL(0))
-        {
-            r1 = roaring_bitmap_copy(r2);
-        }
-        else
-        {
-            r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
-            roaring_bitmap_or_inplace(r1, r2);
-        }
-
-        MemoryContextSwitchTo(oldcontext);
+        roaring_bitmap_or_inplace(r1, r2);
+        roaring_bitmap_free(r2);
     }
 
     PG_RETURN_POINTER(r1);
@@ -822,7 +812,6 @@ Datum
     rb_and_combine(PG_FUNCTION_ARGS)
 {
     MemoryContext aggctx;
-    MemoryContext oldcontext;
     roaring_bitmap_t *r1;
     roaring_bitmap_t *r2;
 
@@ -830,34 +819,34 @@ Datum
     if (!AggCheckCallContext(fcinfo, &aggctx))
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
-                 errmsg("rb_and_combine outside transition context")));
+                 errmsg("rb_and_trans outside transition context")));
 
-    if (PG_ARGISNULL(1))
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
     {
-        if (PG_ARGISNULL(0))
-        {
-            PG_RETURN_NULL();
-        }
-        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+        r1 = setup_roaringbitmap(aggctx);
     }
     else
     {
-        oldcontext = MemoryContextSwitchTo(aggctx);
-
-        r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
-
-        if (PG_ARGISNULL(0))
-        {
-            r1 = roaring_bitmap_copy(r2);
-        }
-        else
-        {
-            r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
-            roaring_bitmap_and_inplace(r1, r2);
-        }
-
-        MemoryContextSwitchTo(oldcontext);
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
     }
+
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+        ß
+        {
+            r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
+
+            if (PG_ARGISNULL(0))
+            {
+                r1 = roaring_bitmap_copy(r2);
+            }
+            else
+            {
+                roaring_bitmap_and_inplace(r1, r2);
+            }
+            roaring_bitmap_free(r2);
+        }
 
     PG_RETURN_POINTER(r1);
 }
@@ -919,7 +908,6 @@ Datum
     rb_xor_combine(PG_FUNCTION_ARGS)
 {
     MemoryContext aggctx;
-    MemoryContext oldcontext;
     roaring_bitmap_t *r1;
     roaring_bitmap_t *r2;
 
@@ -927,20 +915,21 @@ Datum
     if (!AggCheckCallContext(fcinfo, &aggctx))
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
-                 errmsg("rb_xor_combine outside transition context")));
+                 errmsg("rb_xor_trans outside transition context")));
 
-    if (PG_ARGISNULL(1))
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
     {
-        if (PG_ARGISNULL(0))
-        {
-            PG_RETURN_NULL();
-        }
-        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+        r1 = setup_roaringbitmap(aggctx);
     }
     else
     {
-        oldcontext = MemoryContextSwitchTo(aggctx);
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
 
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+    {
         r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
 
         if (PG_ARGISNULL(0))
@@ -949,11 +938,9 @@ Datum
         }
         else
         {
-            r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
             roaring_bitmap_xor_inplace(r1, r2);
         }
-
-        MemoryContextSwitchTo(oldcontext);
+        roaring_bitmap_free(r2);
     }
 
     PG_RETURN_POINTER(r1);
