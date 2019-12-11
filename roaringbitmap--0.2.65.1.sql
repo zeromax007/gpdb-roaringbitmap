@@ -2,7 +2,7 @@
 SET
   search_path = pg_catalog;
 --- data type --
-CREATE
+  CREATE
   OR REPLACE FUNCTION roaringbitmap_in(cstring) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'roaringbitmap_in' LANGUAGE C STRICT IMMUTABLE;
 CREATE
@@ -22,16 +22,13 @@ CREATE TYPE roaringbitmap (
     send = roaringbitmap_send,
     STORAGE = external
   );
-
-CREATE 
+CREATE
   OR REPLACE FUNCTION roaringbitmap(bytea) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'roaringbitmap' LANGUAGE C STRICT IMMUTABLE;
-
 CREATE CAST (bytea AS roaringbitmap) WITH FUNCTION roaringbitmap(bytea);
 CREATE CAST (roaringbitmap AS bytea) WITHOUT FUNCTION;
-
 -- functions --
-CREATE
+  CREATE
   OR REPLACE FUNCTION rb_build(integer[]) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_build' LANGUAGE C STRICT IMMUTABLE;
 CREATE
@@ -39,7 +36,7 @@ CREATE
   'rb_or' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_or_cardinality(roaringbitmap, roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
-  'rb_or_cardinality' LANGUAGE C STRICT IMMUTABLE; 
+  'rb_or_cardinality' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_and(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_and' LANGUAGE C STRICT IMMUTABLE;
@@ -263,8 +260,7 @@ OR REPLACE FUNCTION rb_deserialize(bytea, internal) RETURNS internal AS 'MODULE_
 'rb_deserialize' LANGUAGE C IMMUTABLE;
 CREATE
 OR REPLACE FUNCTION rb_build_trans(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
-'rb_build_trans' LANGUAGE C;
-
+'rb_build_trans' LANGUAGE C IMMUTABLE;
 DROP AGGREGATE IF EXISTS rb_or_agg(roaringbitmap);
 CREATE AGGREGATE rb_or_agg(roaringbitmap)(
   SFUNC = rb_or_trans,

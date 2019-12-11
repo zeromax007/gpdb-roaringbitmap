@@ -145,7 +145,7 @@ OR REPLACE FUNCTION rb_deserialize(bytea, internal) RETURNS internal AS 'MODULE_
 'rb_deserialize' LANGUAGE C IMMUTABLE;
 CREATE
 OR REPLACE FUNCTION rb_build_trans(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
-'rb_build_trans' LANGUAGE C;
+'rb_build_trans' LANGUAGE C IMMUTABLE;
 
 DROP AGGREGATE IF EXISTS rb_or_agg(roaringbitmap);
 CREATE AGGREGATE rb_or_agg(roaringbitmap)(
