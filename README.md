@@ -375,6 +375,14 @@ SELECT RB_ITERATE_DECREMENT(bitmap) FROM t1 WHERE id = 1;
         <td>rb_build('{1,2,3}') = rb_build('{3,2,1}') </td>
     </tr>
     <tr>
+        <td><></td>
+        <td>roraingbitmap</td>
+        <td>roraingbitmap</td>
+        <td>boolean</td>
+        <td>Check two roaringbitmap are not equal.<br>判断两个Bitmap是否不相等。</td>
+        <td>rb_build('{1,2,3}') <> rb_build('{3,2,1}') </td>
+    </tr>
+    <tr>
         <td>&&</td>
         <td>roraingbitmap</td>
         <td>roraingbitmap</td>
