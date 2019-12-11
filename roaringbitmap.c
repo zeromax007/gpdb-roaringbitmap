@@ -602,7 +602,7 @@ Datum
     PG_RETURN_BYTEA_P(serializedbytes);
 }
 
-//bitmap list
+//bitmap iterate
 PG_FUNCTION_INFO_V1(rb_iterate);
 Datum rb_iterate(PG_FUNCTION_ARGS);
 
@@ -641,6 +641,55 @@ Datum
         Datum result;
         result = fctx->current_value;
         roaring_advance_uint32_iterator(fctx);
+        SRF_RETURN_NEXT(funcctx, result);
+    }
+    else
+    {
+        roaring_free_uint32_iterator(fctx);
+        SRF_RETURN_DONE(funcctx);
+    }
+}
+
+
+//bitmap iterate decrement
+PG_FUNCTION_INFO_V1(rb_iterate_decrement);
+Datum rb_iterate_decrement(PG_FUNCTION_ARGS);
+
+Datum
+    rb_iterate_decrement(PG_FUNCTION_ARGS)
+{
+    FuncCallContext *funcctx;
+    MemoryContext oldcontext;
+    roaring_uint32_iterator_t *fctx;
+
+    if (SRF_IS_FIRSTCALL())
+    {
+
+        funcctx = SRF_FIRSTCALL_INIT();
+
+        oldcontext = MemoryContextSwitchTo(funcctx->multi_call_memory_ctx);
+
+        bytea *data = PG_GETARG_BYTEA_P(0);
+        roaring_bitmap_t *r1 = roaring_bitmap_portable_deserialize(VARDATA(data));
+        if (!r1)
+            ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
+
+        roaring_uint32_iterator_t *fctx = roaring_create_iterator(r1);
+
+        funcctx->user_fctx = fctx;
+
+        MemoryContextSwitchTo(oldcontext);
+    }
+
+    funcctx = SRF_PERCALL_SETUP();
+
+    fctx = funcctx->user_fctx;
+
+    if (fctx->has_value)
+    {
+        Datum result;
+        result = fctx->current_value;
+        roaring_previous_uint32_iterator(fctx);
         SRF_RETURN_NEXT(funcctx, result);
     }
     else
@@ -833,7 +882,6 @@ Datum
 
     // Is the second argument non-null?
     if (!PG_ARGISNULL(1))
-        ß
         {
             r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
 

@@ -32,7 +32,7 @@ CREATE CAST (roaringbitmap AS bytea) WITHOUT FUNCTION;
 
 -- functions --
   CREATE
-  OR REPLACE FUNCTION rb_build(integer []) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_build(integer[]) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_build' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_or(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
@@ -126,11 +126,14 @@ CREATE
   OR REPLACE FUNCTION rb_jaccard_index(roaringbitmap, roaringbitmap) RETURNS float8 AS 'MODULE_PATHNAME',
   'rb_jaccard_index' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_to_array(roaringbitmap) RETURNS integer [] AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_to_array(roaringbitmap) RETURNS integer[] AS 'MODULE_PATHNAME',
   'rb_to_array' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_iterate(roaringbitmap) RETURNS SETOF integer AS 'MODULE_PATHNAME',
   'rb_iterate' LANGUAGE C STRICT IMMUTABLE;
+CREATE
+  OR REPLACE FUNCTION rb_iterate_decrement(roaringbitmap) RETURNS SETOF integer AS 'MODULE_PATHNAME',
+  'rb_iterate_decrement' LANGUAGE C STRICT IMMUTABLE;
 -- operator --
   CREATE OPERATOR & (
     LEFTARG = roaringbitmap,
@@ -241,10 +244,10 @@ CREATE
 OR REPLACE FUNCTION rb_and_combine(internal, internal) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_and_combine' LANGUAGE C IMMUTABLE;
 CREATE
-OR REPLACE FUNCTION rb_or_combine(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+OR REPLACE FUNCTION rb_or_combine(internal, internal) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_or_combine' LANGUAGE C IMMUTABLE;
 CREATE
-OR REPLACE FUNCTION rb_xor_combine(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+OR REPLACE FUNCTION rb_xor_combine(internal, internal) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_xor_combine' LANGUAGE C IMMUTABLE;
 CREATE
 OR REPLACE FUNCTION rb_final(internal) RETURNS roaringbitmap AS 'MODULE_PATHNAME',

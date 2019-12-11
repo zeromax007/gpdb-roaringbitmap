@@ -58,6 +58,7 @@ SELECT RB_CARDINALITY(bitmap) FROM t1;
 ## Bitmap to SETOF integer 转换为Offset List
 ```
 SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
+SELECT RB_ITERATE_DECREMENT(bitmap) FROM t1 WHERE id = 1;
 ```
 
 ## Function List 函数一览
@@ -287,8 +288,15 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
         <td>rb_iterate</td>
         <td>roraingbitmap</td>
         <td>setof integer</td>
-        <td>Return offsets List.<br>返回Offset List。</td>
+        <td>Return offsets List in increasing orders.<br>返回Offset List （从小到大）。</td>
         <td>rb_iterate(rb_build('{1,2,3}'))</td>
+    </tr>
+     <tr>
+        <td>rb_iterate_decrement</td>
+        <td>roraingbitmap</td>
+        <td>setof integer</td>
+        <td>Return offsets List in decreasing orders.<br>返回Offset List（从大到小）。</td>
+        <td>rb_iterate_decrement(rb_build('{1,2,3}'))</td>
     </tr>
 </table>
 
