@@ -31,7 +31,7 @@ CREATE CAST (bytea AS roaringbitmap) WITH FUNCTION roaringbitmap(bytea);
 CREATE CAST (roaringbitmap AS bytea) WITHOUT FUNCTION;
 
 -- functions --
-  CREATE
+CREATE
   OR REPLACE FUNCTION rb_build(integer[]) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_build' LANGUAGE C STRICT IMMUTABLE;
 CREATE
@@ -265,6 +265,7 @@ CREATE
 OR REPLACE FUNCTION rb_build_trans(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_build_trans' LANGUAGE C;
 
+DROP AGGREGATE IF EXISTS rb_or_agg(roaringbitmap);
 CREATE AGGREGATE rb_or_agg(roaringbitmap)(
   SFUNC = rb_or_trans,
   STYPE = internal,
@@ -273,6 +274,7 @@ CREATE AGGREGATE rb_or_agg(roaringbitmap)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+DROP AGGREGATE IF EXISTS rb_or_cardinality_agg(roaringbitmap);
 CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
   SFUNC = rb_or_trans,
   STYPE = internal,
@@ -281,6 +283,7 @@ CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+DROP AGGREGATE IF EXISTS rb_and_agg(roaringbitmap);
 CREATE AGGREGATE rb_and_agg(roaringbitmap)(
   SFUNC = rb_and_trans,
   STYPE = internal,
@@ -289,6 +292,7 @@ CREATE AGGREGATE rb_and_agg(roaringbitmap)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+DROP AGGREGATE IF EXISTS rb_and_cardinality_agg(roaringbitmap);
 CREATE AGGREGATE rb_and_cardinality_agg(roaringbitmap)(
   SFUNC = rb_and_trans,
   STYPE = internal,
@@ -297,6 +301,7 @@ CREATE AGGREGATE rb_and_cardinality_agg(roaringbitmap)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+DROP AGGREGATE IF EXISTS rb_xor_agg(roaringbitmap);
 CREATE AGGREGATE rb_xor_agg(roaringbitmap)(
   SFUNC = rb_xor_trans,
   STYPE = internal,
@@ -305,6 +310,7 @@ CREATE AGGREGATE rb_xor_agg(roaringbitmap)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+DROP AGGREGATE IF EXISTS rb_xor_cardinality_agg(roaringbitmap);
 CREATE AGGREGATE rb_xor_cardinality_agg(roaringbitmap)(
   SFUNC = rb_xor_trans,
   STYPE = internal,
@@ -313,7 +319,7 @@ CREATE AGGREGATE rb_xor_cardinality_agg(roaringbitmap)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
-
+DROP AGGREGATE IF EXISTS rb_build_agg(integer);
 CREATE AGGREGATE rb_build_agg(integer)(
   SFUNC = rb_build_trans,
   STYPE = internal,
