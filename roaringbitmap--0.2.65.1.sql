@@ -2,7 +2,7 @@
 SET
   search_path = pg_catalog;
 --- data type --
-  CREATE
+CREATE
   OR REPLACE FUNCTION roaringbitmap_in(cstring) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'roaringbitmap_in' LANGUAGE C STRICT IMMUTABLE;
 CREATE
@@ -25,8 +25,12 @@ CREATE TYPE roaringbitmap (
 CREATE
   OR REPLACE FUNCTION roaringbitmap(bytea) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'roaringbitmap' LANGUAGE C STRICT IMMUTABLE;
+
+DROP CAST IF EXISTS (bytea AS roaringbitmap);
 CREATE CAST (bytea AS roaringbitmap) WITH FUNCTION roaringbitmap(bytea);
+DROP CAST IF EXISTS (roaringbitmap AS bytea);
 CREATE CAST (roaringbitmap AS bytea) WITHOUT FUNCTION;
+
 -- functions --
   CREATE
   OR REPLACE FUNCTION rb_build(integer[]) RETURNS roaringbitmap AS 'MODULE_PATHNAME',

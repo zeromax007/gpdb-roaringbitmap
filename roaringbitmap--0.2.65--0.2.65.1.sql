@@ -5,7 +5,9 @@ CREATE
   OR REPLACE FUNCTION roaringbitmap(bytea) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'roaringbitmap' LANGUAGE C STRICT IMMUTABLE;
 
+DROP CAST IF EXISTS (bytea AS roaringbitmap);
 CREATE CAST (bytea AS roaringbitmap) WITH FUNCTION roaringbitmap(bytea);
+DROP CAST IF EXISTS (roaringbitmap AS bytea);
 CREATE CAST (roaringbitmap AS bytea) WITHOUT FUNCTION;
 
 CREATE
@@ -113,7 +115,7 @@ CREATE
   'rb_iterate_decrement' LANGUAGE C STRICT IMMUTABLE;
 
 
-  CREATE
+CREATE
 OR REPLACE FUNCTION rb_and_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_and_trans' LANGUAGE C IMMUTABLE;
 CREATE

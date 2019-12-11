@@ -650,7 +650,6 @@ Datum
     }
 }
 
-
 //bitmap iterate decrement
 PG_FUNCTION_INFO_V1(rb_iterate_decrement);
 Datum rb_iterate_decrement(PG_FUNCTION_ARGS);
@@ -674,7 +673,7 @@ Datum
         if (!r1)
             ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-        roaring_uint32_iterator_t *fctx = roaring_create_iterator(r1);
+        roaring_uint32_iterator_t *fctx = roaring_create_iterator_last(r1);
 
         funcctx->user_fctx = fctx;
 
@@ -882,19 +881,19 @@ Datum
 
     // Is the second argument non-null?
     if (!PG_ARGISNULL(1))
-        {
-            r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
+    {
+        r2 = (roaring_bitmap_t *)PG_GETARG_POINTER(1);
 
-            if (PG_ARGISNULL(0))
-            {
-                r1 = roaring_bitmap_copy(r2);
-            }
-            else
-            {
-                roaring_bitmap_and_inplace(r1, r2);
-            }
-            roaring_bitmap_free(r2);
+        if (PG_ARGISNULL(0))
+        {
+            r1 = roaring_bitmap_copy(r2);
         }
+        else
+        {
+            roaring_bitmap_and_inplace(r1, r2);
+        }
+        roaring_bitmap_free(r2);
+    }
 
     PG_RETURN_POINTER(r1);
 }

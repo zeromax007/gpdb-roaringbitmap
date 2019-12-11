@@ -9114,6 +9114,15 @@ roaring_uint32_iterator_t *roaring_create_iterator(const roaring_bitmap_t *ra) {
     return newit;
 }
 
+/* Mod by ZEROMAX create previous iterator */
+roaring_uint32_iterator_t *roaring_create_iterator_last(const roaring_bitmap_t *ra) {
+    roaring_uint32_iterator_t *newit =
+        (roaring_uint32_iterator_t *)malloc(sizeof(roaring_uint32_iterator_t));
+    if (newit == NULL) return NULL;
+    roaring_init_iterator_last(ra, newit);
+    return newit;
+}
+
 roaring_uint32_iterator_t *roaring_copy_uint32_iterator(
     const roaring_uint32_iterator_t *it) {
     roaring_uint32_iterator_t *newit =

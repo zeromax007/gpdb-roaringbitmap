@@ -7174,6 +7174,9 @@ void roaring_init_iterator_last(const roaring_bitmap_t *ra,
 */
 roaring_uint32_iterator_t *roaring_create_iterator(const roaring_bitmap_t *ra);
 
+/* Mod by ZEROMAX create previous iterator */
+roaring_uint32_iterator_t *roaring_create_iterator_last(const roaring_bitmap_t *ra);
+
 /**
 * Advance the iterator. If there is a new value, then it->has_value is true.
 * The new value is in it->current_value. Values are traversed in increasing
