@@ -61,6 +61,12 @@ SELECT RB_ITERATE(bitmap) FROM t1 WHERE id = 1;
 SELECT RB_ITERATE_DECREMENT(bitmap) FROM t1 WHERE id = 1;
 ```
 
+## Cast between roaringbitmap and bytea
+```
+SELECT RB_BUILD('{1,2,3}')::BYTEA;
+SELECT '\x3a3000000100000000000000100000000100'::ROARINGBITMAP;
+```
+
 ## Function List 函数一览
 <table>
     <thead>
