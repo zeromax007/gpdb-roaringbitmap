@@ -346,6 +346,50 @@ Datum
     PG_RETURN_INT32(card1);
 }
 
+//bitmap cardinality range
+PG_FUNCTION_INFO_V1(rb_cardinality_range);
+Datum rb_cardinality_range(PG_FUNCTION_ARGS);
+
+Datum
+    rb_cardinality_range(PG_FUNCTION_ARGS)
+{
+    bytea *data = PG_GETARG_BYTEA_P(0);
+    int min = PG_GETARG_INT32(1);
+    int max = PG_GETARG_INT32(2);
+
+    roaring_bitmap_t *r1 = roaring_bitmap_portable_deserialize(VARDATA(data));
+    if (!r1)
+        ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
+
+    int32 card1 = (int)roaring_bitmap_range_cardinality(r1, min, max + 1);
+
+    roaring_bitmap_free(r1);
+    PG_RETURN_INT32(card1);
+}
+
+//bitmap cardinality step
+PG_FUNCTION_INFO_V1(rb_cardinality_step);
+Datum rb_cardinality_step(PG_FUNCTION_ARGS);
+
+Datum
+    rb_cardinality_step(PG_FUNCTION_ARGS)
+{
+    bytea *data = PG_GETARG_BYTEA_P(0);
+    int min = PG_GETARG_INT32(1);
+    int max = PG_GETARG_INT32(2);
+    int step = PG_GETARG_INT32(3);
+
+    roaring_bitmap_t *r1 = roaring_bitmap_portable_deserialize(VARDATA(data));
+    if (!r1)
+        ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
+
+    
+    int32 card1 = (int)roaring_bitmap_range_cardinality(r1, min, max + 1);
+
+    roaring_bitmap_free(r1);
+    PG_RETURN_INT32(card1);
+}
+
 //bitmap is empty
 PG_FUNCTION_INFO_V1(rb_is_empty);
 Datum rb_is_empty(PG_FUNCTION_ARGS);
@@ -591,6 +635,31 @@ Datum
     {
         roaring_bitmap_add(r1, da[n]);
     }
+
+    size_t expectedsize = roaring_bitmap_portable_size_in_bytes(r1);
+
+    bytea *serializedbytes = (bytea *)palloc(VARHDRSZ + expectedsize);
+    roaring_bitmap_portable_serialize(r1, VARDATA(serializedbytes));
+    roaring_bitmap_free(r1);
+
+    SET_VARSIZE(serializedbytes, VARHDRSZ + expectedsize);
+    PG_RETURN_BYTEA_P(serializedbytes);
+}
+
+//bitmap build range
+PG_FUNCTION_INFO_V1(rb_build_range);
+Datum rb_build_range(PG_FUNCTION_ARGS);
+
+Datum
+    rb_build_range(PG_FUNCTION_ARGS)
+{
+    int min = PG_GETARG_INT32(0);
+    int max = PG_GETARG_INT32(1);
+    int step = PG_GETARG_INT32(2);
+
+    roaring_bitmap_t *r1 = roaring_bitmap_from_range(min, max + 1, step);
+    if (!r1)
+        ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
     size_t expectedsize = roaring_bitmap_portable_size_in_bytes(r1);
 

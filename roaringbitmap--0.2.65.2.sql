@@ -32,9 +32,12 @@ DROP CAST IF EXISTS (roaringbitmap AS bytea);
 CREATE CAST (roaringbitmap AS bytea) WITHOUT FUNCTION;
 
 -- functions --
-  CREATE
+CREATE
   OR REPLACE FUNCTION rb_build(integer[]) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_build' LANGUAGE C STRICT IMMUTABLE;
+CREATE
+  OR REPLACE FUNCTION rb_build(integer, integer, integer default 1) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
+  'rb_build_range' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_or(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_or' LANGUAGE C STRICT IMMUTABLE;
@@ -62,6 +65,9 @@ CREATE
 CREATE
   OR REPLACE FUNCTION rb_cardinality(roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
   'rb_cardinality' LANGUAGE C STRICT IMMUTABLE;
+CREATE
+  OR REPLACE FUNCTION rb_cardinality(roaringbitmap, integer, integer) RETURNS integer AS 'MODULE_PATHNAME',
+  'rb_cardinality_range' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_is_empty(roaringbitmap) RETURNS bool AS 'MODULE_PATHNAME',
   'rb_is_empty' LANGUAGE C STRICT IMMUTABLE;
@@ -328,3 +334,7 @@ CREATE AGGREGATE rb_build_agg(integer)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+
+
+---- end ----
+SET search_path = public;

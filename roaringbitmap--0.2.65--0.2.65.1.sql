@@ -1,5 +1,7 @@
 --- Create by ZEROMAX on 2019/12/11 ---
 -- For Update -- 
+SET
+  search_path = pg_catalog;
 
 CREATE 
   OR REPLACE FUNCTION roaringbitmap(bytea) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
@@ -212,3 +214,5 @@ CREATE AGGREGATE rb_build_agg(integer)(
   SERIALFUNC = rb_serialize,
   DESERIALFUNC = rb_deserialize
 );
+
+SET search_path = public;
