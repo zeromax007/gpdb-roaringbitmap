@@ -383,6 +383,7 @@ Datum
     if (!r1)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
+
     
     int32 card1 = (int)roaring_bitmap_range_cardinality(r1, min, max + 1);
 
