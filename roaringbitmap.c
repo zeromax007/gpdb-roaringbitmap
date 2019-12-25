@@ -390,14 +390,22 @@ Datum
     uint32_t rmax = roaring_bitmap_maximum(r1);
 
     max = max == -1 ? rmax : max;
+
     uint32_t p = min;
+    uint32_t n;
     int64 card1 = 0;
     while (p <= max)
     {
-        if (p >= rmin)
+        if (p + step >= rmin)
         {
-            if (roaring_bitmap_contains_range(r1, p, p + step))
-                card1++;
+            for (n = 0; n < step; n++)
+            {
+                if (roaring_bitmap_contains(r1, n + p))
+                {
+                    card1++;
+                    break;
+                }
+            }
         }
         p += step;
     }
@@ -432,8 +440,6 @@ Datum
     na = ARRNELEMS(a);
     da = ARRPTR(a);
 
-    roaring_bitmap_t *rt = roaring_bitmap_create();
-
     uint32_t rmin = roaring_bitmap_minimum(r1);
     uint32_t rmax = roaring_bitmap_maximum(r1);
 
@@ -442,21 +448,21 @@ Datum
     int64 card1 = 0;
     while (p <= max)
     {
-        if (p >= rmin)
+        if (p + step >= rmin)
         {
             for (n = 0; n < na; n++)
             {
-                roaring_bitmap_add(rt, da[n] + p);
+                if (roaring_bitmap_contains(r1, da[n] + p))
+                {
+                    card1++;
+                    break;
+                }
             }
-            if (roaring_bitmap_intersect(r1, rt))
-                card1++;
-            roaring_bitmap_clear(rt);
         }
         p += step;
     }
 
     roaring_bitmap_free(r1);
-    roaring_bitmap_free(rt);
     PG_RETURN_INT64(card1);
 }
 
@@ -703,7 +709,7 @@ Datum
 
     for (n = 0; n < na; n++)
     {
-        roaring_bitmap_add(r1, da[n] +);
+        roaring_bitmap_add(r1, da[n]);
     }
 
     size_t expectedsize = roaring_bitmap_portable_size_in_bytes(r1);
