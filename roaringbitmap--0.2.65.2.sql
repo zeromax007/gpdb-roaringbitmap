@@ -42,32 +42,38 @@ CREATE
   OR REPLACE FUNCTION rb_or(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_or' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_or_cardinality(roaringbitmap, roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_or_cardinality(roaringbitmap, roaringbitmap) RETURNS BIGINT AS 'MODULE_PATHNAME',
   'rb_or_cardinality' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_and(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_and' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_and_cardinality(roaringbitmap, roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_and_cardinality(roaringbitmap, roaringbitmap) RETURNS BIGINT AS 'MODULE_PATHNAME',
   'rb_and_cardinality' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_xor(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_xor' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_xor_cardinality(roaringbitmap, roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_xor_cardinality(roaringbitmap, roaringbitmap) RETURNS BIGINT AS 'MODULE_PATHNAME',
   'rb_xor_cardinality' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_andnot(roaringbitmap, roaringbitmap) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
   'rb_andnot' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_andnot_cardinality(roaringbitmap, roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_andnot_cardinality(roaringbitmap, roaringbitmap) RETURNS BIGINT AS 'MODULE_PATHNAME',
   'rb_andnot_cardinality' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_cardinality(roaringbitmap) RETURNS integer AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_cardinality(roaringbitmap) RETURNS BIGINT AS 'MODULE_PATHNAME',
   'rb_cardinality' LANGUAGE C STRICT IMMUTABLE;
 CREATE
-  OR REPLACE FUNCTION rb_cardinality(roaringbitmap, integer, integer) RETURNS integer AS 'MODULE_PATHNAME',
+  OR REPLACE FUNCTION rb_cardinality(roaringbitmap, integer, integer) RETURNS BIGINT AS 'MODULE_PATHNAME',
   'rb_cardinality_range' LANGUAGE C STRICT IMMUTABLE;
+CREATE
+  OR REPLACE FUNCTION rb_cardinality(roaringbitmap, integer, integer, integer) RETURNS BIGINT AS 'MODULE_PATHNAME',
+  'rb_cardinality_step' LANGUAGE C STRICT IMMUTABLE;
+CREATE
+  OR REPLACE FUNCTION rb_cardinality(roaringbitmap, integer, integer, integer, integer[]) RETURNS BIGINT AS 'MODULE_PATHNAME',
+  'rb_cardinality_step_intval' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_is_empty(roaringbitmap) RETURNS bool AS 'MODULE_PATHNAME',
   'rb_is_empty' LANGUAGE C STRICT IMMUTABLE;
@@ -260,7 +266,7 @@ CREATE
 OR REPLACE FUNCTION rb_final(internal) RETURNS roaringbitmap AS 'MODULE_PATHNAME',
 'rb_serialize' LANGUAGE C IMMUTABLE;
 CREATE
-OR REPLACE FUNCTION rb_cardinality_final(internal) RETURNS integer AS 'MODULE_PATHNAME',
+OR REPLACE FUNCTION rb_cardinality_final(internal) RETURNS BIGINT AS 'MODULE_PATHNAME',
 'rb_cardinality_final' LANGUAGE C IMMUTABLE;
 CREATE
 OR REPLACE FUNCTION rb_serialize(internal) RETURNS bytea AS 'MODULE_PATHNAME',

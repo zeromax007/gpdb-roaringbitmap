@@ -158,11 +158,11 @@ Datum
     if (!r2)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int32 card1 = (int)roaring_bitmap_or_cardinality(r1, r2);
+    int64 card1 = roaring_bitmap_or_cardinality(r1, r2);
 
     roaring_bitmap_free(r1);
     roaring_bitmap_free(r2);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap_and
@@ -212,11 +212,11 @@ Datum
     if (!r2)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int32 card1 = (int)roaring_bitmap_and_cardinality(r1, r2);
+    int64 card1 = roaring_bitmap_and_cardinality(r1, r2);
 
     roaring_bitmap_free(r1);
     roaring_bitmap_free(r2);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap_andnot
@@ -266,11 +266,11 @@ Datum
     if (!r2)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int32 card1 = (int)roaring_bitmap_andnot_cardinality(r1, r2);
+    int64 card1 = roaring_bitmap_andnot_cardinality(r1, r2);
 
     roaring_bitmap_free(r1);
     roaring_bitmap_free(r2);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap_xor
@@ -320,11 +320,11 @@ Datum
     if (!r2)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int32 card1 = (int)roaring_bitmap_xor_cardinality(r1, r2);
+    int64 card1 = roaring_bitmap_xor_cardinality(r1, r2);
 
     roaring_bitmap_free(r1);
     roaring_bitmap_free(r2);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap cardinality
@@ -340,10 +340,10 @@ Datum
     if (!r1)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int32 card1 = (int)roaring_bitmap_get_cardinality(r1);
+    int64 card1 = roaring_bitmap_get_cardinality(r1);
 
     roaring_bitmap_free(r1);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap cardinality range
@@ -354,17 +354,17 @@ Datum
     rb_cardinality_range(PG_FUNCTION_ARGS)
 {
     bytea *data = PG_GETARG_BYTEA_P(0);
-    int min = PG_GETARG_INT32(1);
-    int max = PG_GETARG_INT32(2);
+    uint32_t min = PG_GETARG_INT32(1);
+    uint32_t max = PG_GETARG_INT32(2);
 
     roaring_bitmap_t *r1 = roaring_bitmap_portable_deserialize(VARDATA(data));
     if (!r1)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int32 card1 = (int)roaring_bitmap_range_cardinality(r1, min, max + 1);
+    int64 card1 = roaring_bitmap_range_cardinality(r1, min, max + 1);
 
     roaring_bitmap_free(r1);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap cardinality step
@@ -375,20 +375,89 @@ Datum
     rb_cardinality_step(PG_FUNCTION_ARGS)
 {
     bytea *data = PG_GETARG_BYTEA_P(0);
-    int min = PG_GETARG_INT32(1);
-    int max = PG_GETARG_INT32(2);
+    uint32_t min = PG_GETARG_INT32(1);
+    uint32_t max = PG_GETARG_INT32(2);
     int step = PG_GETARG_INT32(3);
+
+    if (step < 2)
+        ereport(ERROR, (errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE), errmsg("step must be greater than 1")));
 
     roaring_bitmap_t *r1 = roaring_bitmap_portable_deserialize(VARDATA(data));
     if (!r1)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
+    uint32_t rmin = roaring_bitmap_minimum(r1);
+    uint32_t rmax = roaring_bitmap_maximum(r1);
 
-    
-    int32 card1 = (int)roaring_bitmap_range_cardinality(r1, min, max + 1);
+    max = max == -1 ? rmax : max;
+    uint32_t p = min;
+    int64 card1 = 0;
+    while (p <= max)
+    {
+        if (p >= rmin)
+        {
+            if (roaring_bitmap_contains_range(r1, p, p + step))
+                card1++;
+        }
+        p += step;
+    }
 
     roaring_bitmap_free(r1);
-    PG_RETURN_INT32(card1);
+    PG_RETURN_INT64(card1);
+}
+
+//bitmap cardinality step intval
+PG_FUNCTION_INFO_V1(rb_cardinality_step_intval);
+Datum rb_cardinality_step_intval(PG_FUNCTION_ARGS);
+
+Datum
+    rb_cardinality_step_intval(PG_FUNCTION_ARGS)
+{
+    bytea *data = PG_GETARG_BYTEA_P(0);
+    uint32_t min = PG_GETARG_INT32(1);
+    uint32_t max = PG_GETARG_INT32(2);
+    int step = PG_GETARG_INT32(3);
+    ArrayType *a = PG_GETARG_ARRAYTYPE_P(4);
+
+    if (step < 2)
+        ereport(ERROR, (errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE), errmsg("step must be greater than 1")));
+
+    roaring_bitmap_t *r1 = roaring_bitmap_portable_deserialize(VARDATA(data));
+    if (!r1)
+        ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
+
+    int na, n;
+    int *da;
+    CHECKARRVALID(a);
+    na = ARRNELEMS(a);
+    da = ARRPTR(a);
+
+    roaring_bitmap_t *rt = roaring_bitmap_create();
+
+    uint32_t rmin = roaring_bitmap_minimum(r1);
+    uint32_t rmax = roaring_bitmap_maximum(r1);
+
+    max = max == -1 ? rmax : max;
+    uint32_t p = min;
+    int64 card1 = 0;
+    while (p <= max)
+    {
+        if (p >= rmin)
+        {
+            for (n = 0; n < na; n++)
+            {
+                roaring_bitmap_add(rt, da[n] + p);
+            }
+            if (roaring_bitmap_intersect(r1, rt))
+                card1++;
+            roaring_bitmap_clear(rt);
+        }
+        p += step;
+    }
+
+    roaring_bitmap_free(r1);
+    roaring_bitmap_free(rt);
+    PG_RETURN_INT64(card1);
 }
 
 //bitmap is empty
@@ -620,7 +689,7 @@ Datum rb_build(PG_FUNCTION_ARGS);
 Datum
     rb_build(PG_FUNCTION_ARGS)
 {
-    ArrayType *a = (ArrayType *)PG_GETARG_ARRAYTYPE_P(0);
+    ArrayType *a = PG_GETARG_ARRAYTYPE_P(0);
 
     int na, n;
     int *da;
@@ -634,7 +703,7 @@ Datum
 
     for (n = 0; n < na; n++)
     {
-        roaring_bitmap_add(r1, da[n]);
+        roaring_bitmap_add(r1, da[n] +);
     }
 
     size_t expectedsize = roaring_bitmap_portable_size_in_bytes(r1);
@@ -654,9 +723,12 @@ Datum rb_build_range(PG_FUNCTION_ARGS);
 Datum
     rb_build_range(PG_FUNCTION_ARGS)
 {
-    int min = PG_GETARG_INT32(0);
-    int max = PG_GETARG_INT32(1);
+    uint32_t min = PG_GETARG_INT32(0);
+    uint32_t max = PG_GETARG_INT32(1);
     int step = PG_GETARG_INT32(2);
+
+    if (step < 1)
+        ereport(ERROR, (errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE), errmsg("step must be greater than 0")));
 
     roaring_bitmap_t *r1 = roaring_bitmap_from_range(min, max + 1, step);
     if (!r1)
@@ -1196,10 +1268,10 @@ Datum
     {
         r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
 
-        int32 card1 = (int)roaring_bitmap_get_cardinality(r1);
+        int64 card1 = roaring_bitmap_get_cardinality(r1);
         roaring_bitmap_free(r1);
 
-        PG_RETURN_INT32(card1);
+        PG_RETURN_INT64(card1);
     }
 }
 
