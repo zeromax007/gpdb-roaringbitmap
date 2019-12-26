@@ -361,7 +361,7 @@ Datum
     if (!r1)
         ereport(ERROR, (errcode(ERRCODE_NULL_VALUE_NOT_ALLOWED), errmsg("bitmap format is error")));
 
-    int64 card1 = roaring_bitmap_range_cardinality(r1, min, max + 1);
+    int64 card1 = roaring_bitmap_range_cardinality(r1, min, max == -1 ? -1 : max + 1);
 
     roaring_bitmap_free(r1);
     PG_RETURN_INT64(card1);

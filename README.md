@@ -86,6 +86,15 @@ SELECT '\x3a3000000100000000000000100000000100'::ROARINGBITMAP;
         <td>rb_build('{1,2,3,4,5}')</td>
     </tr>
     <tr>
+        <td>rb_build</td>
+        <td>integer<br>integer<br>integer</td>
+        <td>roaringbitmap</td>
+        <td>
+            Build a roaringbitmap from integer range (with step).
+        </td>
+        <td>rb_build('{1,2,3,4,5}')</td>
+    </tr>
+    <tr>
         <td>rb_to_array</td>
         <td>roaringbitmap</td>
         <td>integer[]</td>
@@ -125,35 +134,56 @@ SELECT '\x3a3000000100000000000000100000000100'::ROARINGBITMAP;
     <tr>
         <td>rb_cardinality</td>
         <td>roraingbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Retrun roaringbitmap cardinality.<br>统计基数</td>
         <td>rb_cardinality(rb_build('{1,2,3,4,5}'))</td>
     </tr>
     <tr>
+        <td>rb_cardinality</td>
+        <td>roraingbitmap<br>integer<br>integer</td>
+        <td>bigint</td>
+        <td>Retrun roaringbitmap cardinality between integer range.</td>
+        <td>rb_cardinality(rb_build('{1,2,3,4,5}'),1,4)</td>
+    </tr>
+    <tr>
+        <td>rb_cardinality</td>
+        <td>roraingbitmap<br>integer<br>integer<br>integer</td>
+        <td>bigint</td>
+        <td>Retrun roaringbitmap cardinality between integer range with step.</td>
+        <td>rb_cardinality(rb_build('{1,2,3,4,5}'),1,4,2)</td>
+    </tr>
+    <tr>
+        <td>rb_cardinality</td>
+        <td>roraingbitmap<br>integer<br>integer<br>integer<br>integer[]</td>
+        <td>bigint</td>
+        <td>Retrun roaringbitmap cardinality between integer range with step, in offset array.</td>
+        <td>rb_cardinality(rb_build('{1,2,3,4,5}'),1,4,2,'{1,3}')</td>
+    </tr>
+    <tr>
         <td>rb_and_cardinality</td>
         <td>roraingbitmap<br>roaringbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Two roaringbitmap and calculation, return cardinality.<br>And计算并返回基数。</td>
         <td>rb_and_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
         <td>rb_or_cardinality</td>
         <td>roraingbitmap<br>roaringbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Two roaringbitmap or calculation, return cardinality.<br>Or计算并返回基数。</td>
         <td>rb_or_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
         <td>rb_xor_cardinality</td>
         <td>roraingbitmap<br>roaringbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Two roaringbitmap xor calculation, return cardinality.<br>Xor计算并返回基数。</td>
         <td>rb_xor_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
     <tr>
         <td>rb_andnot_cardinality</td>
         <td>roraingbitmap<br>roaringbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Two roaringbitmap andnot calculation, return cardinality.<br>AndNot计算并返回基数。</td>
         <td>rb_andnot_cardinality(rb_build('{1,2,3}'),rb_build('{3,4,5}'))</td>
     </tr>
@@ -470,21 +500,21 @@ SELECT '\x3a3000000100000000000000100000000100'::ROARINGBITMAP;
     <tr>
         <td>rb_or_cardinality_agg</td>
         <td>roraingbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Or Aggregate calculations from a roraingbitmap set, return cardinality.<br>Or 聚合计算并返回其基数。</td>
         <td>rb_or_cardinality_agg(rb_build('{1,2,3}'))</td>
     </tr>   
     <tr>
         <td>rb_and_cardinality_agg</td>
         <td>roraingbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>And Aggregate calculations from a roraingbitmap set, return cardinality.<br>And 聚合计算并返回其基数。</td>
         <td>rb_and_cardinality_agg(rb_build('{1,2,3}'))</td>
     </tr>  
     <tr>
         <td>rb_xor_cardinality_agg</td>
         <td>roraingbitmap</td>
-        <td>integer</td>
+        <td>bigint</td>
         <td>Xor Aggregate calculations from a roraingbitmap set, return cardinality.<br>Xor 聚合计算并返回其基数。</td>
         <td>rb_xor_cardinality_agg(rb_build('{1,2,3}'))</td>
     </tr>
