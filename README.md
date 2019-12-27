@@ -154,6 +154,13 @@ SELECT '\x3a3000000100000000000000100000000100'::ROARINGBITMAP;
     </tr>
     <tr>
         <td>rb_cardinality</td>
+        <td>roraingbitmap<br>integer<br>integer<br>integer<br>integer<br>integer</td>
+        <td>bigint</td>
+        <td>Retrun roaringbitmap cardinality between integer range with step, in offset range.</td>
+        <td>rb_cardinality(rb_build('{1,2,3,4,5}'),1,4,2,1,3)</td>
+    </tr>
+    <tr>
+        <td>rb_cardinality</td>
         <td>roraingbitmap<br>integer<br>integer<br>integer<br>integer[]</td>
         <td>bigint</td>
         <td>Retrun roaringbitmap cardinality between integer range with step, in offset array.</td>

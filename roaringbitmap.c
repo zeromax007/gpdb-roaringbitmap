@@ -417,8 +417,8 @@ Datum
     uint32_t min = PG_GETARG_INT32(1);
     uint32_t max = PG_GETARG_INT32(2);
     int step = PG_GETARG_INT32(3);
-    uint32_t start = PG_GETARG_INT32(4);
-    uint32_t end = PG_GETARG_INT32(5);
+    int start = PG_GETARG_INT32(4);
+    int end = PG_GETARG_INT32(5);
 
     if (step < 2)
         ereport(ERROR, (errcode(ERRCODE_NUMERIC_VALUE_OUT_OF_RANGE), errmsg("step must be greater than 1")));
@@ -439,7 +439,7 @@ Datum
     {
         if (p + step >= rmin)
         {
-            if (roaring_bitmap_range_cardinality(r1, p + start, p + end) > 0)
+            if (roaring_bitmap_range_cardinality(r1, p + start, p + end + 1) > 0)
                 card1++;
         }
         p += step;
@@ -478,7 +478,7 @@ Datum
     uint32_t rmin = roaring_bitmap_minimum(r1);
     uint32_t rmax = roaring_bitmap_maximum(r1);
 
-    max = max == -1 ? rmax : max;
+    max = max == -1 ? rmax : (rmax < max ? rmax : max);
     uint32_t p = min;
     int64 card1 = 0;
     while (p <= max)

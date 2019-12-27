@@ -57,7 +57,7 @@ CREATE
 DROP FUNCTION IF EXISTS rb_cardinality(roaringbitmap, integer, integer, integer, integer, integer);
 CREATE
   OR REPLACE FUNCTION rb_cardinality(roaringbitmap, integer, integer, integer, integer, integer) RETURNS BIGINT AS 'MODULE_PATHNAME',
-  'rb_cardinality_step_intval' LANGUAGE C STRICT IMMUTABLE;
+  'rb_cardinality_step_interval' LANGUAGE C STRICT IMMUTABLE;
 CREATE
   OR REPLACE FUNCTION rb_is_empty(roaringbitmap) RETURNS bool AS 'MODULE_PATHNAME',
   'rb_is_empty' LANGUAGE C STRICT IMMUTABLE;
