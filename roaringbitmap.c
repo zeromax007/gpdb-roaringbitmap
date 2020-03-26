@@ -924,6 +924,9 @@ Datum
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_or_trans outside transition context")));
 
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
     {
@@ -965,6 +968,9 @@ Datum
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_or_trans outside transition context")));
 
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
     {
@@ -1004,10 +1010,14 @@ Datum
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_and_trans outside transition context")));
 
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
     {
         r1 = setup_roaringbitmap(aggctx);
+
     }
     else
     {
@@ -1051,6 +1061,9 @@ Datum
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_and_trans outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
 
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
@@ -1098,6 +1111,9 @@ Datum
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_xor_trans outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
 
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
@@ -1147,6 +1163,9 @@ Datum
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_xor_trans outside transition context")));
 
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
     {
@@ -1193,6 +1212,9 @@ Datum
         ereport(ERROR,
                 (errcode(ERRCODE_DATA_EXCEPTION),
                  errmsg("rb_build_trans outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
 
     // Is the first argument a NULL?
     if (PG_ARGISNULL(0))
