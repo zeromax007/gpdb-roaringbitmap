@@ -951,6 +951,51 @@ Datum
     PG_RETURN_POINTER(r1);
 }
 
+//bitmap or trans pre
+PG_FUNCTION_INFO_V1(rb_or_trans_pre);
+Datum rb_or_trans_pre(PG_FUNCTION_ARGS);
+
+Datum
+rb_or_trans_pre(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    bytea *bb;
+    roaring_bitmap_t *r1;
+    roaring_bitmap_t *r2;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                        errmsg("rb_or_trans_pre outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
+    {
+        r1 = setup_roaringbitmap(aggctx);
+    }
+    else
+    {
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+    {
+        bb = PG_GETARG_BYTEA_P(1);
+
+        r2 = roaring_bitmap_portable_deserialize(VARDATA(bb));
+
+        roaring_bitmap_or_inplace(r1, r2);
+        roaring_bitmap_free(r2);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
 //bitmap or combine
 PG_FUNCTION_INFO_V1(rb_or_combine);
 Datum rb_or_combine(PG_FUNCTION_ARGS);
@@ -1011,6 +1056,59 @@ Datum
                  errmsg("rb_and_trans outside transition context")));
 
     // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
+    {
+        r1 = setup_roaringbitmap(aggctx);
+
+    }
+    else
+    {
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+    {
+        bb = PG_GETARG_BYTEA_P(1);
+
+        r2 = roaring_bitmap_portable_deserialize(VARDATA(bb));
+
+        if (PG_ARGISNULL(0))
+        {
+            r1 = roaring_bitmap_copy(r2);
+        }
+        else
+        {
+            roaring_bitmap_and_inplace(r1, r2);
+        }
+        roaring_bitmap_free(r2);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
+//bitmap and trans pre
+PG_FUNCTION_INFO_V1(rb_and_trans_pre);
+Datum rb_and_trans_pre(PG_FUNCTION_ARGS);
+
+Datum
+rb_and_trans_pre(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    bytea *bb;
+    roaring_bitmap_t *r1;
+    roaring_bitmap_t *r2;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                        errmsg("rb_and_trans_pre outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX
     if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
 
     // Is the first argument a NULL?
@@ -1146,6 +1244,58 @@ Datum
     PG_RETURN_POINTER(r1);
 }
 
+//bitmap xor trans pre
+PG_FUNCTION_INFO_V1(rb_xor_trans_pre);
+Datum rb_xor_trans_pre(PG_FUNCTION_ARGS);
+
+Datum
+rb_xor_trans_pre(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+    bytea *bb;
+    roaring_bitmap_t *r1;
+    roaring_bitmap_t *r2;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                        errmsg("rb_xor_trans_pre outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
+    {
+        r1 = setup_roaringbitmap(aggctx);
+    }
+    else
+    {
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+    {
+        bb = PG_GETARG_BYTEA_P(1);
+
+        r2 = roaring_bitmap_portable_deserialize(VARDATA(bb));
+
+        if (PG_ARGISNULL(0))
+        {
+            r1 = roaring_bitmap_copy(r2);
+        }
+        else
+        {
+            roaring_bitmap_xor_inplace(r1, r2);
+        }
+        roaring_bitmap_free(r2);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
 //bitmap xor combine
 PG_FUNCTION_INFO_V1(rb_xor_combine);
 Datum rb_xor_combine(PG_FUNCTION_ARGS);
@@ -1214,6 +1364,47 @@ Datum
                  errmsg("rb_build_trans outside transition context")));
 
     // Fix bug at args are both null @20200326 ZEROMAX 
+    if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
+
+    // Is the first argument a NULL?
+    if (PG_ARGISNULL(0))
+    {
+        r1 = setup_roaringbitmap(aggctx);
+    }
+    else
+    {
+        r1 = (roaring_bitmap_t *)PG_GETARG_POINTER(0);
+    }
+
+    // Is the second argument non-null?
+    if (!PG_ARGISNULL(1))
+    {
+        bb = PG_GETARG_INT32(1);
+        roaring_bitmap_add(r1, bb);
+    }
+
+    PG_RETURN_POINTER(r1);
+}
+
+//bitmap build trans pre
+PG_FUNCTION_INFO_V1(rb_build_trans_pre);
+Datum rb_build_trans_pre(PG_FUNCTION_ARGS);
+
+Datum
+rb_build_trans_pre(PG_FUNCTION_ARGS)
+{
+    MemoryContext aggctx;
+
+    int bb;
+    roaring_bitmap_t *r1;
+
+    // We must be called as a transition routine or we fail.
+    if (!AggCheckCallContext(fcinfo, &aggctx))
+        ereport(ERROR,
+                (errcode(ERRCODE_DATA_EXCEPTION),
+                        errmsg("rb_build_trans_pre outside transition context")));
+
+    // Fix bug at args are both null @20200326 ZEROMAX
     if (PG_ARGISNULL(0) && PG_ARGISNULL(1)) PG_RETURN_NULL();
 
     // Is the first argument a NULL?

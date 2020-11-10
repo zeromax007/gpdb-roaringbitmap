@@ -251,11 +251,20 @@ CREATE
 OR REPLACE FUNCTION rb_and_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_and_trans' LANGUAGE C IMMUTABLE;
 CREATE
+OR REPLACE FUNCTION rb_and_trans_pre(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_and_trans_pre' LANGUAGE C IMMUTABLE;
+CREATE
 OR REPLACE FUNCTION rb_or_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_or_trans' LANGUAGE C IMMUTABLE;
 CREATE
+OR REPLACE FUNCTION rb_or_trans_pre(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_or_trans_pre' LANGUAGE C IMMUTABLE;
+CREATE
 OR REPLACE FUNCTION rb_xor_trans(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_xor_trans' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_xor_trans_pre(internal, roaringbitmap) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_xor_trans_pre' LANGUAGE C IMMUTABLE;
 CREATE
 OR REPLACE FUNCTION rb_and_combine(internal, internal) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_and_combine' LANGUAGE C IMMUTABLE;
@@ -280,9 +289,14 @@ OR REPLACE FUNCTION rb_deserialize(bytea, internal) RETURNS internal AS 'MODULE_
 CREATE
 OR REPLACE FUNCTION rb_build_trans(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
 'rb_build_trans' LANGUAGE C IMMUTABLE;
+CREATE
+OR REPLACE FUNCTION rb_build_trans_pre(internal, integer) RETURNS internal AS 'MODULE_PATHNAME',
+'rb_build_trans_pre' LANGUAGE C IMMUTABLE;
+
 DROP AGGREGATE IF EXISTS rb_or_agg(roaringbitmap);
 CREATE AGGREGATE rb_or_agg(roaringbitmap)(
   SFUNC = rb_or_trans,
+  PREFUNC = rb_or_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_final,
   COMBINEFUNC = rb_or_combine,
@@ -292,6 +306,7 @@ CREATE AGGREGATE rb_or_agg(roaringbitmap)(
 DROP AGGREGATE IF EXISTS rb_or_cardinality_agg(roaringbitmap);
 CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
   SFUNC = rb_or_trans,
+  PREFUNC = rb_or_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_cardinality_final,
   COMBINEFUNC = rb_or_combine,
@@ -301,6 +316,7 @@ CREATE AGGREGATE rb_or_cardinality_agg(roaringbitmap)(
 DROP AGGREGATE IF EXISTS rb_and_agg(roaringbitmap);
 CREATE AGGREGATE rb_and_agg(roaringbitmap)(
   SFUNC = rb_and_trans,
+  PREFUNC = rb_and_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_final,
   COMBINEFUNC = rb_and_combine,
@@ -310,6 +326,7 @@ CREATE AGGREGATE rb_and_agg(roaringbitmap)(
 DROP AGGREGATE IF EXISTS rb_and_cardinality_agg(roaringbitmap);
 CREATE AGGREGATE rb_and_cardinality_agg(roaringbitmap)(
   SFUNC = rb_and_trans,
+  PREFUNC = rb_and_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_cardinality_final,
   COMBINEFUNC = rb_and_combine,
@@ -319,6 +336,7 @@ CREATE AGGREGATE rb_and_cardinality_agg(roaringbitmap)(
 DROP AGGREGATE IF EXISTS rb_xor_agg(roaringbitmap);
 CREATE AGGREGATE rb_xor_agg(roaringbitmap)(
   SFUNC = rb_xor_trans,
+  PREFUNC = rb_xor_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_final,
   COMBINEFUNC = rb_xor_combine,
@@ -328,6 +346,7 @@ CREATE AGGREGATE rb_xor_agg(roaringbitmap)(
 DROP AGGREGATE IF EXISTS rb_xor_cardinality_agg(roaringbitmap);
 CREATE AGGREGATE rb_xor_cardinality_agg(roaringbitmap)(
   SFUNC = rb_xor_trans,
+  PREFUNC = rb_xor_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_cardinality_final,
   COMBINEFUNC = rb_xor_combine,
@@ -337,6 +356,7 @@ CREATE AGGREGATE rb_xor_cardinality_agg(roaringbitmap)(
 DROP AGGREGATE IF EXISTS rb_build_agg(integer);
 CREATE AGGREGATE rb_build_agg(integer)(
   SFUNC = rb_build_trans,
+  PREFUNC = rb_build_trans_pre,
   STYPE = internal,
   FINALFUNC = rb_final,
   COMBINEFUNC = rb_or_combine,
